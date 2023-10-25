@@ -35,6 +35,7 @@
  * - Line and section names are case-insensitive in VSFilter, but we
  *   assume they are capitalized as in Aegisub.
  * - SSA v4.00++ is not supported.
+ * - This file requires Ragel 5. It does not work with Ragel 6.
  */
 
 #import "SubParsing.h"
