@@ -1467,6 +1467,20 @@ SubRendererRef SubRendererCreate(bool isSSA, char *header, size_t headerLen, int
 		return s;
 	}
 }
+
+SubRendererRef SubRendererCreateCF(bool isSSA, CFStringRef header, int width, int height)
+{
+	@autoreleasepool {
+		SubRendererRef s = nil;
+		@try {
+			s = (SubRendererRef)CFBridgingRetain([[SubATSUIRenderer alloc] initWithScriptType:isSSA ? kSubTypeSSA : kSubTypeSRT header:(__bridge NSString * _Nonnull)(header) videoWidth:width videoHeight:height]);
+		}
+		@catch (NSException *e) {
+			NSLog(@"Caught exception while creating SubRenderer - %@", e);
+		}
+		return s;
+	}
+}
 #endif
 
 void SubRendererRenderPacket(SubRendererRef s, CGContextRef c, CFStringRef str, int cWidth, int cHeight)

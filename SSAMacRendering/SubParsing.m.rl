@@ -118,6 +118,7 @@ BOOL SubParseFontVerticality(NSString **fontname)
 }
 
 @synthesize extra;
+@synthesize offset;
 
 -(NSString*)description
 {

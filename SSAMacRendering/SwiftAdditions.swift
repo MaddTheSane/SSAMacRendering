@@ -28,11 +28,11 @@ public func parseSSAAlignment(_ b: UInt8) -> (h: SubAlignmentH, v: SubAlignmentV
 }
 
 extension SubRGBAColor {
-	public init(rgb: UInt32) {
+	@inlinable public init(rgb: UInt32) {
 		self = SubParseSSAColor(rgb)
 	}
 	
-	public init(string: String) {
+	@inlinable public init(string: String) {
 		self = SubParseSSAColorString(string)
 	}
 	
@@ -53,19 +53,4 @@ public func parseSSAFile(_ ssa: String) -> (headers: [String: String], styles: [
 		return nil
 	}
 	return (head, styles, subs)
-}
-
-@available(*, renamed: "parseASSAlignment(_:)", unavailable)
-public func SubParseASSAlignment(_ a: UInt8) -> (h: SubAlignmentH, v: SubAlignmentV) {
-	fatalError()
-}
-
-@available(*, unavailable, renamed: "parseFontVerticality(_:)")
-public func SubParseFontVerticality(_ fontname: inout String) -> Bool {
-	fatalError()
-}
-
-@available(*, renamed: "parseSSAFile(_:)", unavailable)
-public func SubParseSSAFile(_ ssa: String) -> (headers: [String: String], styles: [[String: String]], subs: [[String: String]])? {
-	fatalError()
 }

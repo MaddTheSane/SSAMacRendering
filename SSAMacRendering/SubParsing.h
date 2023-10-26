@@ -95,6 +95,7 @@ typedef struct SubRenderFade {
 	UniCharArrayOffset offset;
 }
 @property (strong) id extra;
+@property (readonly) UniCharArrayOffset offset;
 @end
 
 extern SubRGBAColor SubParseSSAColor(unsigned rgb);

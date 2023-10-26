@@ -123,6 +123,7 @@ extern NSString * const kSubDefaultFontName;
 - (instancetype)initWithScriptType:(SubType)type headers:(nullable NSDictionary<NSString*,NSString*> *)headers styles:(nullable NSArray<NSDictionary<NSString*,NSString*>*> *)styles delegate:(nullable SubRenderer*)delegate;
 -(SubStyle*)styleForName:(NSString *)name;
 @property (readonly, copy) NSDictionary<NSString*,SubStyle*> *styles;
+@property (readonly, copy) NSDictionary<NSString*,id> *headers;
 @end
 
 NS_ASSUME_NONNULL_END

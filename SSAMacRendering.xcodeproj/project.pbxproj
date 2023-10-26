@@ -13,6 +13,9 @@
 		555234651FACDF2A0033FD48 /* CTFrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555234641FACDF2A0033FD48 /* CTFrameAdditions.swift */; };
 		5552346B1FACE9080033FD48 /* CTFontAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5552346A1FACE9080033FD48 /* CTFontAdditions.swift */; };
 		555762022AE9B67900120C89 /* SwiftAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C8F3C1F33B8A6004D986C /* SwiftAdditions.swift */; };
+		5557620B2AE9C61F00120C89 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557620A2AE9C61F00120C89 /* main.swift */; };
+		555762142AE9C66700120C89 /* SubHTMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555762132AE9C66700120C89 /* SubHTMLExporter.swift */; };
+		555762172AE9E67900120C89 /* SSAMacRendering.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 557C8ED41F33913E004D986C /* SSAMacRendering.framework */; };
 		557C8ED91F33913E004D986C /* SSAMacRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8ED71F33913E004D986C /* SSAMacRendering.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		557C8EF21F339151004D986C /* SubATSUIRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EE31F339151004D986C /* SubATSUIRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		557C8EF31F339151004D986C /* SubATSUIRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 557C8EE41F339151004D986C /* SubATSUIRenderer.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
@@ -79,6 +82,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		555762152AE9E67200120C89 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 557C8ECB1F33913E004D986C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 557C8ED31F33913E004D986C;
+			remoteInfo = SSAMacRendering;
+		};
 		557C8F391F33A56B004D986C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 557C8ECB1F33913E004D986C /* Project object */;
@@ -166,6 +176,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		555762062AE9C61F00120C89 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		557C8F3B1F33A56B004D986C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -227,6 +246,9 @@
 		5524CD4A1FAB977E00D87C85 /* CTA.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = CTA.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		555234641FACDF2A0033FD48 /* CTFrameAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTFrameAdditions.swift; sourceTree = "<group>"; };
 		5552346A1FACE9080033FD48 /* CTFontAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTFontAdditions.swift; sourceTree = "<group>"; };
+		555762082AE9C61F00120C89 /* ssa2html-swift */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ssa2html-swift"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5557620A2AE9C61F00120C89 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		555762132AE9C66700120C89 /* SubHTMLExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubHTMLExporter.swift; sourceTree = "<group>"; };
 		557C8ED41F33913E004D986C /* SSAMacRendering.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SSAMacRendering.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		557C8ED71F33913E004D986C /* SSAMacRendering.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSAMacRendering.h; sourceTree = "<group>"; };
 		557C8ED81F33913E004D986C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -283,6 +305,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		555762052AE9C61F00120C89 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				555762172AE9E67900120C89 /* SSAMacRendering.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		557C8ED01F33913E004D986C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -359,6 +389,15 @@
 			path = "ssa2pdf-CT-Swift";
 			sourceTree = "<group>";
 		};
+		555762092AE9C61F00120C89 /* ssa2html-swift */ = {
+			isa = PBXGroup;
+			children = (
+				5557620A2AE9C61F00120C89 /* main.swift */,
+				555762132AE9C66700120C89 /* SubHTMLExporter.swift */,
+			);
+			path = "ssa2html-swift";
+			sourceTree = "<group>";
+		};
 		557C8ECA1F33913E004D986C = {
 			isa = PBXGroup;
 			children = (
@@ -372,6 +411,7 @@
 				55A344F81F34E6F6002C823B /* ssa2pdf-Swift */,
 				550BCA491F9882DE0077C5FC /* ssa2pdf-CT-Swift */,
 				55EDFDE42036D82E00887AF5 /* ssa2png */,
+				555762092AE9C61F00120C89 /* ssa2html-swift */,
 				550BCA421F9882690077C5FC /* Frameworks */,
 				557C8ED51F33913E004D986C /* Products */,
 			);
@@ -387,6 +427,7 @@
 				55A344F71F34E6F6002C823B /* ssa2pdf-Swift */,
 				559238951F97D0B400065700 /* CoreTextAdditions.framework */,
 				55EDFDE32036D82E00887AF5 /* ssa2png */,
+				555762082AE9C61F00120C89 /* ssa2html-swift */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -544,6 +585,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		555762072AE9C61F00120C89 /* ssa2html-swift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 555762122AE9C61F00120C89 /* Build configuration list for PBXNativeTarget "ssa2html-swift" */;
+			buildPhases = (
+				555762042AE9C61F00120C89 /* Sources */,
+				555762052AE9C61F00120C89 /* Frameworks */,
+				555762062AE9C61F00120C89 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				555762162AE9E67200120C89 /* PBXTargetDependency */,
+			);
+			name = "ssa2html-swift";
+			productName = "ssa2html-swift";
+			productReference = 555762082AE9C61F00120C89 /* ssa2html-swift */;
+			productType = "com.apple.product-type.tool";
+		};
 		557C8ED31F33913E004D986C /* SSAMacRendering */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 557C8EDC1F33913E004D986C /* Build configuration list for PBXNativeTarget "SSAMacRendering" */;
@@ -680,10 +739,13 @@
 		557C8ECB1F33913E004D986C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0900;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "C.W. Betts";
 				TargetAttributes = {
+					555762072AE9C61F00120C89 = {
+						CreatedOnToolsVersion = 15.0.1;
+					};
 					557C8ED31F33913E004D986C = {
 						CreatedOnToolsVersion = 8.3.3;
 						LastSwiftMigration = "";
@@ -740,6 +802,7 @@
 				55A344E01F341E0A002C823B /* ssa2html */,
 				55A344F61F34E6F6002C823B /* ssa2pdf-Swift */,
 				55EDFDE22036D82E00887AF5 /* ssa2png */,
+				555762072AE9C61F00120C89 /* ssa2html-swift */,
 			);
 		};
 /* End PBXProject section */
@@ -809,6 +872,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		555762042AE9C61F00120C89 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				555762142AE9C66700120C89 /* SubHTMLExporter.swift in Sources */,
+				5557620B2AE9C61F00120C89 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		557C8ECF1F33913E004D986C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -889,6 +961,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		555762162AE9E67200120C89 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 557C8ED31F33913E004D986C /* SSAMacRendering */;
+			targetProxy = 555762152AE9E67200120C89 /* PBXContainerItemProxy */;
+		};
 		557C8F3A1F33A56B004D986C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 557C8ED31F33913E004D986C /* SSAMacRendering */;
@@ -938,6 +1015,50 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		5557620C2AE9C61F00120C89 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		5557620D2AE9C61F00120C89 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		557C8EDA1F33913E004D986C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1276,6 +1397,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		555762122AE9C61F00120C89 /* Build configuration list for PBXNativeTarget "ssa2html-swift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5557620C2AE9C61F00120C89 /* Debug */,
+				5557620D2AE9C61F00120C89 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		557C8ECE1F33913E004D986C /* Build configuration list for PBXProject "SSAMacRendering" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

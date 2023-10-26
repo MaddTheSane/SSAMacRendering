@@ -118,7 +118,7 @@ NSString * const kSubDefaultFontName = @"Helvetica";
 		tmp = fontname;
 		vertical = SubParseFontVerticality(&tmp);
 		if (vertical)
-			fontname = tmp;
+			fontname = [tmp copy];
 		
 		platformSizeScale = 0;
 		[delegate didCompleteStyleParsing:self];
@@ -165,6 +165,7 @@ static NSString *ColorString(SubRGBAColor *c)
 @synthesize resX;
 @synthesize resY;
 @synthesize styles;
+@synthesize headers;
 
 BOOL IsScriptASS(NSDictionary *headers)
 {	

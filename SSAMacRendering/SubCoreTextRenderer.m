@@ -526,9 +526,7 @@ typedef NS_OPTIONS(UInt8, RenderOptions) {
 
 @end
 
-
 #if 1
-
 SubRendererRef SubRendererCreate(bool isSSA, char *header, size_t headerLen, int width, int height)
 {
 	@autoreleasepool {
