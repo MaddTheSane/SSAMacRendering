@@ -52,13 +52,14 @@ internal final class SubHTMLExporter: SubRenderer {
 font-family: "\(s.fontname)"; font-size: \(s.size * (72.0/96.0))pt;
 color: \(colorToString(s.primaryColor));
 -webkit-text-stroke-color: \(colorToString(s.outlineColor));
+-webkit-text-stroke-width: \(s.outlineRadius)px;
 letter-spacing: \(s.tracking)px;
 text-shadow: \(colorToString(s.shadowColor)) \(s.shadowDist*2)px \(s.shadowDist*2)px 0;
 text-outline: \(colorToString(s.shadowColor)) \(s.outlineRadius)px 0;
 width: \(sc!.resX - CGFloat(s.marginL) - CGFloat(s.marginR))px;
 font-weight: \(FontWeightString(forWeight: s.weight)); font-style: \(s.italic ? "italic" : "normal"); text-decoration: \(s.underline ? "underline" : (s.strikeout ? "line-through" : "none"));
-"text-align: \(s.alignH.stringValue);
-"vertical-align: \(s.alignV.stringValue);
+text-align: \(s.alignH.stringValue);
+vertical-align: \(s.alignV.stringValue);
 }
 
 """
@@ -151,7 +152,7 @@ font-weight: \(FontWeightString(forWeight: s.weight)); font-style: \(s.italic ? 
 			if div.scale > 0 {
 				continue
 			}
-			var spanCount = div.spans?.count ?? 0
+			let spanCount = div.spans?.count ?? 0
 			var spans = 1
 			var close_div = false
 			
