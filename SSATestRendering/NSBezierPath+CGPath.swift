@@ -56,7 +56,7 @@ public extension NSBezierPath {
         }
     }
 	
-	var qartzPath: CGPath? {
+	var quartzPath: CGPath? {
 		guard elementCount != 0 else {
 			return nil
 		}

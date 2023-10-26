@@ -10,8 +10,11 @@ import Foundation
 import SSAMacRendering
 
 struct StderrOutputStream: TextOutputStream {
-	public mutating func write(_ string: String) { fputs(string, stderr) }
+	public mutating func write(_ string: String) {
+		fputs(string, stderr)
+	}
 }
+var errStream = StderrOutputStream()
 
 internal final class SubHTMLExporter: SubRenderer {
 	var sc: SubContext? = nil
@@ -57,7 +60,7 @@ letter-spacing: \(s.tracking)px;
 text-shadow: \(colorToString(s.shadowColor)) \(s.shadowDist*2)px \(s.shadowDist*2)px 0;
 text-outline: \(colorToString(s.shadowColor)) \(s.outlineRadius)px 0;
 width: \(sc!.resX - CGFloat(s.marginL) - CGFloat(s.marginR))px;
-font-weight: \(FontWeightString(forWeight: s.weight)); font-style: \(s.italic ? "italic" : "normal"); text-decoration: \(s.underline ? "underline" : (s.strikeout ? "line-through" : "none"));
+font-weight: \(fontWeightString(forWeight: s.weight)); font-style: \(s.italic ? "italic" : "normal"); text-decoration: \(s.underline ? "underline" : (s.strikeout ? "line-through" : "none"));
 text-align: \(s.alignH.stringValue);
 vertical-align: \(s.alignV.stringValue);
 }
@@ -141,7 +144,6 @@ vertical-align: \(s.alignV.stringValue);
 			spanEx.str += "\(div.styleLine!.shadowDist * 2)px \(div.styleLine!.shadowDist * 2)px 0; "
 
 		default:
-			var errStream = StderrOutputStream()
 			print("unimplemented tag type \(tag)", to: &errStream)
 			break
 		}
@@ -265,7 +267,7 @@ private extension SubAlignmentV {
 
 // font-weight actually seems to be enumerated 100|200|...|900
 // but, like, whatever
-private func FontWeightString(forWeight weight: Float32) -> String {
+private func fontWeightString(forWeight weight: Float32) -> String {
 	if weight == 0 {
 		return "normal"
 	} else if weight == 1 {
@@ -282,7 +284,7 @@ private func escapeCSSIdentifier(_ s: String) -> String {
 	return s.replacingOccurrences(of: " ", with: "_")
 }
 
-internal final class SubHTMLSpanExtra: NSObject, NSCopying {
+private final class SubHTMLSpanExtra: NSObject, NSCopying {
 	func copy(with zone: NSZone? = nil) -> Any {
 		return SubHTMLSpanExtra()
 	}
