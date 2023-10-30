@@ -33,18 +33,22 @@ func makeHTML(from fileURL: URL) -> String {
 		
 		htm.endOfHead()
 		
-		while !ss.isEmpty {
-			guard let sl = ss.getSerializedPacket() else {
-				break
+		autoreleasepool {
+			while !ss.isEmpty {
+				guard let sl = ss.getSerializedPacket() else {
+					break
+				}
+				if sl.line.count == 1 {
+					continue
+				}
+				
+				htm.add(sl)
 			}
-			if sl.line.count == 1 {
-				continue
-			}
-			
-			htm.add(sl)
 		}
 		
 		htm.endOfFile()
+		
+		_=sc
 		
 		return htm.html
 	}

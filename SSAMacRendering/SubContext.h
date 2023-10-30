@@ -106,7 +106,7 @@ extern NSString * const kSubDefaultFontName;
 
 @interface SubContext : NSObject {
 	@public;
-	NSDictionary<NSString*,id> *headers;
+	NSDictionary<NSString*,NSString*> *headers;
 	NSDictionary<NSString*,SubStyle*> *styles;
 	SubStyle *defaultStyle;
 
@@ -123,7 +123,7 @@ extern NSString * const kSubDefaultFontName;
 - (instancetype)initWithScriptType:(SubType)type headers:(nullable NSDictionary<NSString*,NSString*> *)headers styles:(nullable NSArray<NSDictionary<NSString*,NSString*>*> *)styles delegate:(nullable SubRenderer*)delegate;
 -(SubStyle*)styleForName:(NSString *)name;
 @property (readonly, copy) NSDictionary<NSString*,SubStyle*> *styles;
-@property (readonly, copy) NSDictionary<NSString*,id> *headers;
+@property (readonly, copy) NSDictionary<NSString*,NSString*> *headers;
 @end
 
 NS_ASSUME_NONNULL_END

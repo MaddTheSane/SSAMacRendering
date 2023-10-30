@@ -270,7 +270,7 @@ static NSString * const Scale;
 	
 //	Boolean b = s->weight > 0, i = s->italic, u = s->underline, st = s->strikeout;
 	NSFontTraitMask traits = 0;
-	if (s->weight > 0) {
+	if (s->weight == 1) {
 		traits |= NSBoldFontMask;
 	}
 	if (s->italic) {
@@ -298,7 +298,7 @@ static NSString * const Scale;
 	dict[(NSString*)kCTFontAttributeName] = newFont;
 	
 	if (s->tracking > 0) { // bug in VSFilter: negative tracking in style lines is ignored
-		Fixed tracking = FloatToFixed(s->tracking);
+		float tracking = s->tracking;
 		
 //		SetATSUStyleOther(style, kATSUAfterWithStreamShiftTag, sizeof(Fixed), &tracking);
 	}
@@ -325,9 +325,9 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale
 
 
 typedef NS_OPTIONS(UInt8, RenderOptions) {
-	renderMultipleParts = 1, //!< call ATSUDrawText more than once, needed for color/border changes in the middle of lines
+	renderMultipleParts = 1, //!< Call ATSUDrawText more than once, needed for color/border changes in the middle of lines
 	renderManualShadows = 2, //!< CG shadows can't change inside a line... probably
-	renderComplexTransforms = 4 //!< can't draw text at all, have to transform each vertex. needed for 3D perspective, or \frz in the middle of a line
+	renderComplexTransforms = 4 //!< Can't draw text at all, have to transform each vertex. needed for 3D perspective, or \frz in the middle of a line
 };
 
 -(void)spanChangedTag:(SubSSATagName)tag span:(SubRenderSpan*)span div:(SubRenderDiv*)div param:(void*)p

@@ -102,9 +102,9 @@ BOOL SubDifferentiateLatin12(const unsigned char *data, NSInteger length)
 
 static NSString *SubloadDataWithEncoding(NSData *data, UniversalDetector *ud, NSString *path)
 {
+	NSString *enc_str = [ud MIMECharset];
 	NSStringEncoding enc = [ud encoding];
 	float conf = [ud confidence];
-	NSString *enc_str = [ud MIMECharset];
 	BOOL latin2 = enc == NSWindowsCP1250StringEncoding;
 	
 	if (latin2) {

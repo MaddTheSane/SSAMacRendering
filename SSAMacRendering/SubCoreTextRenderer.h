@@ -16,10 +16,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SubCoreTextRenderer : SubRenderer
 
+/** @brief Creates a \c CGFont object and registers it for font matching via CoreText.
+ *
+ */
 + (nullable CGFontRef)registerFontFromData:(NSData*)data error:(NSError*_Nullable __autoreleasing*_Nullable)error CF_RETURNS_RETAINED;
 
 /** @brief Unregisters a font from CoreText and releases it.
- 
+ *
+ * @discussion The font will \b always be released, no matter if the unregistration was successful.
  */
 + (BOOL)unregisterFont:(CF_CONSUMED CGFontRef)font error:(NSError*_Nullable __autoreleasing*_Nullable)error;
 

@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class SubSerializer, SubRenderer, SubRenderSpan;
 
-typedef NS_OPTIONS(uint16_t, SubRenderAnimations) {
+typedef NS_ENUM(uint16_t, SubRenderAnimations) {
 	SubRenderAnimationNone = 0,
 	SubRenderAnimationSimpleFade = 1 << 0,
 	SubRenderAnimationCopmlexFade = 1 << 1,

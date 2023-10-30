@@ -116,6 +116,8 @@ extension SubSSATagName: CustomStringConvertible {
 			return "tag_pbo"
 		case .tag_fad:
 			return "tag_fad"
+		case .tag_fade:
+			return "tag_fade"
 		}
 	}
 }

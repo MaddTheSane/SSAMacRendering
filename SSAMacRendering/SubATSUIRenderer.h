@@ -26,6 +26,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NS_DEPRECATED_MAC(10_0, 10_8)
 @interface SubATSUIRenderer : SubRenderer {
 	SubContext *context;
 

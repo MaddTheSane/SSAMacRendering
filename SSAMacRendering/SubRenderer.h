@@ -41,7 +41,7 @@ typedef NS_ENUM(int, SubSSATagName) {
 	tag_fn, tag_fs, tag_fscx, tag_fscy, tag_fsp, tag_frx,
 	tag_fry, tag_frz, tag_1c, tag_2c, tag_3c, tag_4c, tag_alpha,
 	tag_1a, tag_2a, tag_3a, tag_4a, tag_r, tag_p,
-	tag_t, tag_pbo, tag_fad,
+	tag_t, tag_pbo, tag_fad, tag_fade,
 };
 
 @interface SubRenderer : NSObject

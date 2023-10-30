@@ -111,40 +111,40 @@ vertical-align: \(s.alignV.stringValue);
 		switch tag {
 		case .tag_b:
 			iv()
-			spanEx.str += "font-weight: \(ival != 0 ? "bold" : "normal"); "
+			spanEx.str.append("font-weight: \(ival != 0 ? "bold" : "normal"); ")
 
 		case .tag_i:
-			iv();
-			spanEx.str += "font-style: \(ival != 0 ? "italic" : "normal"); "
+			iv()
+			spanEx.str.append("font-style: \(ival != 0 ? "italic" : "normal"); ")
 
 		case .tag_u:
-			iv();
-			spanEx.str += "text-decoration: \(ival != 0 ? "underline" : "none"); "
+			iv()
+			spanEx.str.append("text-decoration: \(ival != 0 ? "underline" : "none"); ")
 
 		case .tag_s:
-			iv();
-			spanEx.str += "text-decoration: \(ival != 0 ? "line-through" : "none"); "
+			iv()
+			spanEx.str.append("text-decoration: \(ival != 0 ? "line-through" : "none"); ")
 
 		case .tag_fn:
-			sv();
-			spanEx.str += "font-family: \(sval); "
+			sv()
+			spanEx.str.append("font-family: \(sval); ")
 
 		case .tag_fs:
-			fv();
+			fv()
 			//this is wrong, see GetWinFontSizeScale()
-			spanEx.str += "font-size: \(fval * (72.0/96.0)); "
+			spanEx.str.append("font-size: \(fval * (72.0/96.0)); ")
 
 		case .tag_1c:
-			cv();
+			cv()
 			spanEx.str += String(format: "color: #%0.6X; ", ival)
 
 		case .tag_4c:
-			cv();
+			cv()
 			spanEx.str += String(format: "text-shadow: #%0.6X ", ival)
-			spanEx.str += "\(div.styleLine!.shadowDist * 2)px \(div.styleLine!.shadowDist * 2)px 0; "
+			spanEx.str.append("\(div.styleLine!.shadowDist * 2)px \(div.styleLine!.shadowDist * 2)px 0; ")
 
 		default:
-			print("unimplemented tag type \(tag)", to: &errStream)
+			print("unimplemented tag type \(tag.description) (\(tag.rawValue))", to: &errStream)
 			break
 		}
 	}
@@ -159,18 +159,18 @@ vertical-align: \(s.alignV.stringValue);
 			var close_div = false
 			
 			if div.isPositioned {
-				html += "<div style=\"top: \(div.posY)px; left: \(div.posX)px; position: absolute\">"
+				html.append("<div style=\"top: \(div.posY)px; left: \(div.posX)px; position: absolute\">")
 				close_div = true
 			}
 			
-			html += #"<span class="\#(escapeCSSIdentifier(div.styleLine!.name))">"#
+			html.append(#"<span class="\#(escapeCSSIdentifier(div.styleLine!.name))">"#)
 			
 			for j in 0 ..< spanCount {
 				let span = div.spans![j]
 				let ex = span.extra as! SubHTMLSpanExtra
 				let str = ex.str
 				if !str.isEmpty {
-					html += "<span style=\"\(str)\">"
+					html.append("<span style=\"\(str)\">")
 					spans += 1
 				}
 				
@@ -183,11 +183,11 @@ vertical-align: \(s.alignV.stringValue);
 			}
 			
 			while spans != 0 {
-				html += "</span>"
+				html.append("</span>")
 				spans -= 1
 			}
 			if close_div {
-				html += "</div>"
+				html.append("</div>")
 			}
 			html.append("\n")
 		}
@@ -231,7 +231,7 @@ vertical-align: \(s.alignV.stringValue);
 	}
 	
 	func endOfFile() {
-		html += "</body></html>\n"
+		html.append("</body></html>\n")
 	}
 }
 

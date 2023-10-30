@@ -23,7 +23,7 @@
 #define __SUBIMPORT_H__
 
 #include <sys/cdefs.h>
-#include <CoreServices/CoreServices.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
