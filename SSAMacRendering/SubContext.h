@@ -56,7 +56,13 @@ typedef NS_ENUM(UInt8, SubBorderStyle) {
 };
 enum {kSubPositionNone = INT_MAX};
 
-typedef ATSURGBAlphaColor SubRGBAColor;
+//! All values range from 0.0 to 1.0.
+typedef struct SubRGBAColor {
+	float	red;
+	float	green;
+	float	blue;
+	float	alpha;
+} SubRGBAColor;
 
 extern NSString * const kSubDefaultFontName;
 
