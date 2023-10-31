@@ -1270,15 +1270,15 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubATSU
 
 #pragma mark Main Renderer Function
 
--(void)renderPacket:(NSString *)packet inContext:(CGContextRef)c width:(CGFloat)cWidth height:(CGFloat)cHeight
+-(void)renderPacket:(NSString *)packet inContext:(CGContextRef)c size:(CGSize)size
 {
 	Fixed bottomPen = 0, topPen = 0, centerPen = 0, *storePen=NULL;
 	NSArray<SubRenderDiv*> *divs = SubParsePacket(packet, context, self);
 	NSInteger lastLayer = 0;
 
 	CGContextSaveGState(c);
-	if (cWidth != videoWidth || cHeight != videoHeight)
-		CGContextScaleCTM(c, cWidth / videoWidth, cHeight / videoHeight);
+	if (size.width != videoWidth || size.height != videoHeight)
+		CGContextScaleCTM(c, size.width / videoWidth, size.height / videoHeight);
 	CGContextSetLineCap(c, kCGLineCapRound); // avoid spiky outlines on some fonts
 	CGContextSetLineJoin(c, kCGLineJoinRound);
 	CGContextSetShouldSmoothFonts(c, NO);    // don't do LCD subpixel antialiasing
@@ -1424,7 +1424,7 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubATSU
 		}
 		
 		if (drawTextBounds)
-			VisualizeLayoutLineHeights(c, layout, breaks, breakCount, FloatToFixed(div->styleLine->outlineRadius), penX, penY, cHeight);
+			VisualizeLayoutLineHeights(c, layout, breaks, breakCount, FloatToFixed(div->styleLine->outlineRadius), penX, penY, size.height);
 
 		breakc.breakCount = breakCount;
 		breakc.breaks = breaks;
@@ -1487,7 +1487,7 @@ void SubRendererRenderPacket(SubRendererRef s, CGContextRef c, CFStringRef str, 
 {
 	@autoreleasepool {
 		@try {
-			[(__bridge SubRenderer*)s renderPacket:(__bridge NSString*)str inContext:c width:cWidth height:cHeight];
+			[(__bridge id<SubRenderer>)s renderPacket:(__bridge NSString*)str inContext:c size:CGSizeMake(cWidth, cHeight)];
 		}
 		@catch (NSException *e) {
 			NSLog(@"Caught exception during rendering - %@", e);

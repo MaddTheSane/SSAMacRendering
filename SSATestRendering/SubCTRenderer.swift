@@ -294,7 +294,7 @@ private func drawShape(_ c: CGContext, path: CGPath, div: SubRenderDiv, firstSpa
 	}
 }
 
-class SubCTRenderer: SubRenderer {
+class SubCTRenderer: NSObject, SubRenderer {
 	fileprivate enum TextLayer: Int {
 		case shadow = 0
 		case outline
@@ -477,13 +477,13 @@ class SubCTRenderer: SubRenderer {
 		context = SubContext(scriptType: type, headers: headers, styles: styles, delegate: self)
 	}
 
-	override func render(packet: String, in c: CGContext, width cWidth: CGFloat, height cHeight: CGFloat) {
+	func render(packet: String, in c: CGContext, size: CGSize) {
 		let divs = SubParsePacket(packet, context, self)
 		var lastLayer: Int32 = 0
 		
 		c.saveGState()
-		if cWidth != videoWidth || cHeight != videoHeight {
-			c.scaleBy(x: cWidth / videoWidth, y: cHeight / videoHeight)
+		if size.width != videoWidth || size.height != videoHeight {
+			c.scaleBy(x: size.width / videoWidth, y: size.height / videoHeight)
 		}
 		c.setLineCap(.round) // avoid spiky outlines on some fonts
 		c.setLineJoin(.round)
@@ -659,12 +659,12 @@ if (storePen) *storePen = penY;
 		
 	}
 	
-	override func didCompleteHeaderParsing(_ sc: SubContext) {
+	func didCompleteHeaderParsing(_ sc: SubContext) {
 		screenScaleX = videoWidth / sc.resX
 		screenScaleY = videoHeight / sc.resY
 	}
 	
-	override func didCompleteStyleParsing(_ s: SubStyle) {
+	func didCompleteStyleParsing(_ s: SubStyle) {
 		var size: CGFloat = 12
 		var fontAttr = [String: Any]()
 		var fontTraits = [String: Any]()
@@ -726,11 +726,11 @@ SetATSUStyleOther(style, kATSUAfterWithStreamShiftTag, sizeof(Fixed), &tracking)
 		s.extra = Style(dictionary: someExtras)
 	}
 
-	override func didCreateStartingSpan(_ span: SubRenderSpan, for div: SubRenderDiv) {
+	func didCreateStartingSpan(_ span: SubRenderSpan, for div: SubRenderDiv) {
 		span.extra = SpanExtra(style: div.styleLine!, colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!)
 	}
 	
-	override func spanChanged(tag: SubSSATagName, span: SubRenderSpan, div: SubRenderDiv, param p: UnsafeMutableRawPointer) {
+	func spanChanged(tag: SubSSATagName, span: SubRenderSpan, div: SubRenderDiv, param p: UnsafeMutableRawPointer) {
 		let spanEx = span.extra as! SpanExtra
 		let style = spanEx.style
 		let isFirstSpan = div.spans?.count == 0
@@ -939,8 +939,8 @@ SetATSUStyleOther(style, kATSUAfterWithStreamShiftTag, sizeof(Fixed), &tracking)
 		}
 	}
 	
-	override var aspectRatio: CGFloat {
-		return videoWidth / videoHeight;
+	var aspectRatio: CGFloat {
+		return videoWidth / videoHeight
 	}
 }
 

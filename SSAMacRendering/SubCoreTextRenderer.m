@@ -382,14 +382,14 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCore
 	}
 }
 
-- (void)renderPacket:(NSString *)packet inContext:(CGContextRef)c width:(CGFloat)cWidth height:(CGFloat)cHeight
+- (void)renderPacket:(NSString *)packet inContext:(CGContextRef)c size:(CGSize)size
 {
 	NSArray<SubRenderDiv*>* divs = SubParsePacket(packet, context, self);
 	int32_t lastLayer = 0;
 
 	CGContextSaveGState(c);
-	if (cWidth != videoWidth || cHeight != videoHeight) {
-		CGContextScaleCTM(c, cWidth / videoWidth, cHeight / videoHeight);
+	if (size.width != videoWidth || size.height != videoHeight) {
+		CGContextScaleCTM(c, size.width / videoWidth, size.height / videoHeight);
 	}
 	CGContextSetLineCap(c, kCGLineCapRound); // avoid spiky outlines on some fonts
 	CGContextSetLineJoin(c, kCGLineJoinRound);

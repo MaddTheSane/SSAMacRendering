@@ -41,7 +41,7 @@ NSString * const kSubDefaultFontName = @"Helvetica";
 @synthesize alignH, alignV, borderStyle;
 @synthesize platformSizeScale;
 
-+(SubStyle*)defaultStyleWithDelegate:(SubRenderer*)delegate
++(SubStyle*)defaultStyleWithDelegate:(id<SubRenderer>)delegate
 {
 	SubStyle *sty = [[SubStyle alloc] init];
 	
@@ -64,11 +64,13 @@ NSString * const kSubDefaultFontName = @"Helvetica";
 	sty->borderStyle = kSubBorderStyleNormal;
 	sty->delegate = delegate;
 	
-	[delegate didCompleteStyleParsing:sty];
+	if ([delegate respondsToSelector:@selector(didCompleteStyleParsing:)]) {
+		[delegate didCompleteStyleParsing:sty];
+	}
 	return sty;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)s scriptVersion:(UInt8)version delegate:(SubRenderer*)delegate_
+- (instancetype)initWithDictionary:(NSDictionary *)s scriptVersion:(UInt8)version delegate:(id<SubRenderer>)delegate_
 {
 	if (self = [super init]) {
 		NSString *tmp;
@@ -121,7 +123,9 @@ NSString * const kSubDefaultFontName = @"Helvetica";
 			fontname = [tmp copy];
 		
 		platformSizeScale = 0;
-		[delegate didCompleteStyleParsing:self];
+		if ([delegate respondsToSelector:@selector(didCompleteStyleParsing:)]) {
+			[delegate didCompleteStyleParsing:self];
+		}
 	}
 	
 	return self;
@@ -196,7 +200,7 @@ BOOL IsScriptASS(NSDictionary *headers)
 	}
 }
 
--(SubContext*)initWithScriptType:(SubType)type headers:(NSDictionary *)headers_ styles:(NSArray *)stylesArray delegate:(SubRenderer*)delegate
+-(SubContext*)initWithScriptType:(SubType)type headers:(NSDictionary *)headers_ styles:(NSArray *)stylesArray delegate:(id<SubRenderer>)delegate
 {
 	if (self = [super init]) {
 		resX = 640;
@@ -209,7 +213,9 @@ BOOL IsScriptASS(NSDictionary *headers)
 			[self readSSAHeaders];
 		}
 		
-		[delegate didCompleteHeaderParsing:self];
+		if ([delegate respondsToSelector:@selector(didCompleteHeaderParsing:)]) {
+			[delegate didCompleteHeaderParsing:self];
+		}
 		
 		styles = nil;
 		if (stylesArray) {
@@ -242,21 +248,4 @@ BOOL IsScriptASS(NSDictionary *headers)
 	SubStyle *sty = [styles objectForKey:name];
 	return sty ? sty : defaultStyle;
 }
-@end
-
-@implementation SubRenderer
-- (instancetype)init
-{
-	if (self = [super init]) {
-		
-	}
-	return self;
-}
-
--(void)didCompleteStyleParsing:(SubStyle*)s {assert(0);}
--(void)didCompleteHeaderParsing:(SubContext*)sc {assert(0);}
--(void)didCreateStartingSpan:(SubRenderSpan *)span forDiv:(SubRenderDiv *)div {assert(0);}
--(void)spanChangedTag:(SubSSATagName)tag span:(SubRenderSpan*)span div:(SubRenderDiv*)div param:(void*)p {assert(0);}
--(CGFloat)aspectRatio {return 4./3.;}
--(void)renderPacket:(NSString *)packet inContext:(CGContextRef)c width:(CGFloat)cWidth height:(CGFloat)cHeight {assert(0);}
 @end

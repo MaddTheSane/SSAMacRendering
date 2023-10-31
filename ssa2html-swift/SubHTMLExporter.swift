@@ -16,7 +16,13 @@ struct StderrOutputStream: TextOutputStream {
 }
 var errStream = StderrOutputStream()
 
-internal final class SubHTMLExporter: SubRenderer {
+internal final class SubHTMLExporter: NSObject, SubRenderer {
+	let aspectRatio: CGFloat = 4/3
+	
+	func render(packet: String, in c: CGContext, size: CGSize) {
+		//do nothing. Shouldn't even be called...
+	}
+	
 	var sc: SubContext? = nil
 	var html: String
 	
@@ -31,7 +37,7 @@ internal final class SubHTMLExporter: SubRenderer {
 """
 	}
 	
-	override func didCompleteHeaderParsing(_ sc_: SubContext) {
+	func didCompleteHeaderParsing(_ sc_: SubContext) {
 		sc = sc_
 		html +=
 """
@@ -42,7 +48,7 @@ internal final class SubHTMLExporter: SubRenderer {
 """
 	}
 	
-	override func didCompleteStyleParsing(_ s: SubStyle) {
+	func didCompleteStyleParsing(_ s: SubStyle) {
 		func colorToString(_ theCol: SubRGBAColor) -> String {
 			let aRed = theCol.red * 255
 			let aGreen = theCol.green * 255
@@ -78,11 +84,11 @@ vertical-align: \(s.alignV.stringValue);
 """
 	}
 	
-	override func didCreateStartingSpan(_ span: SubRenderSpan, for div: SubRenderDiv) {
+	func didCreateStartingSpan(_ span: SubRenderSpan, for div: SubRenderDiv) {
 		span.extra = SubHTMLSpanExtra()
 	}
 	
-	override func spanChanged(tag: SubSSATagName, span: SubRenderSpan, div: SubRenderDiv, param p: UnsafeMutableRawPointer) {
+	func spanChanged(tag: SubSSATagName, span: SubRenderSpan, div: SubRenderDiv, param p: UnsafeMutableRawPointer) {
 		let spanEx = span.extra as! SubHTMLSpanExtra
 		var sval: String = ""
 		var fval: Float = 0

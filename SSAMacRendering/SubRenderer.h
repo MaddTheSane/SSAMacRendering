@@ -44,19 +44,18 @@ typedef NS_ENUM(int, SubSSATagName) {
 	tag_t, tag_pbo, tag_fad, tag_fade,
 };
 
-@interface SubRenderer : NSObject
-- (instancetype)init NS_DESIGNATED_INITIALIZER;
-
+@protocol SubRenderer <NSObject>
+@optional
 -(void)didCompleteHeaderParsing:(SubContext*)sc;
 -(void)didCompleteStyleParsing:(SubStyle*)s;
 
+@required
 -(void)didCreateStartingSpan:(SubRenderSpan*)span forDiv:(SubRenderDiv*)div NS_SWIFT_NAME(didCreateStartingSpan(_:for:));
 
 -(void)spanChangedTag:(SubSSATagName)tag span:(SubRenderSpan*)span div:(SubRenderDiv*)div param:(void*)p NS_SWIFT_NAME(spanChanged(tag:span:div:param:));
 
--(CGFloat)aspectRatio;
 @property (readonly) CGFloat aspectRatio;
--(void)renderPacket:(NSString *)packet inContext:(CGContextRef)c width:(CGFloat)cWidth height:(CGFloat)cHeight NS_SWIFT_NAME(render(packet:in:width:height:));
+-(void)renderPacket:(NSString *)packet inContext:(CGContextRef)c size:(CGSize)size NS_SWIFT_NAME(render(packet:in:size:));
 @end
 
 
@@ -66,7 +65,8 @@ CF_ASSUME_NONNULL_BEGIN
 
 #endif
 
-typedef struct CF_BRIDGED_TYPE(SubRenderer) __SubRendererPtr *SubRendererRef;
+//This is actually an Obj-C class conforming to the SubRenderer protocol
+typedef struct CF_BRIDGED_TYPE(id) __SubRendererPtr *SubRendererRef CF_SWIFT_UNAVAILABLE("Just use the Obj-C classes instead.");
 
 // these are actually implemented in SubATSUIRenderer.m
 extern SubRendererRef __nullable SubRendererCreate(bool isSSA,  char * _Nullable header, size_t headerLen, int width, int height) CF_RETURNS_RETAINED;

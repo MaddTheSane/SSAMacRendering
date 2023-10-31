@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SubCoreTextRenderer : SubRenderer
+@interface SubCoreTextRenderer : NSObject <SubRenderer>
 
 /** @brief Creates a \c CGFont object and registers it for font matching via CoreText.
  *
@@ -37,7 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)spanChangedTag:(SubSSATagName)tag span:(SubRenderSpan*)span div:(SubRenderDiv*)div param:(void*)p;
 
 @property (readonly) CGFloat aspectRatio;
--(void)renderPacket:(NSString *)packet inContext:(CGContextRef)c width:(CGFloat)cWidth height:(CGFloat)cHeight;
 @end
 
 NS_ASSUME_NONNULL_END

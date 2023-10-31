@@ -66,7 +66,7 @@ typedef struct SubRGBAColor {
 
 extern NSString * const kSubDefaultFontName;
 
-@class SubRenderer;
+@protocol SubRenderer;
 
 @interface SubStyle : NSObject {
 	id extra;
@@ -74,7 +74,7 @@ extern NSString * const kSubDefaultFontName;
 	@public;
 	NSString *name;
 	NSString *fontname;
-	__weak SubRenderer *delegate;
+	__weak id<SubRenderer> delegate;
 	
 	Float32 size;
 	SubRGBAColor primaryColor, secondaryColor, outlineColor, shadowColor;
@@ -92,7 +92,7 @@ extern NSString * const kSubDefaultFontName;
 @property (strong) id extra;
 @property (copy) NSString *name;
 @property (copy) NSString *fontname;
-@property (weak) SubRenderer *delegate;
+@property (weak) id<SubRenderer> delegate;
 	
 @property Float32 size;
 @property SubRGBAColor primaryColor, secondaryColor, outlineColor, shadowColor;
@@ -106,8 +106,8 @@ extern NSString * const kSubDefaultFontName;
 @property SubBorderStyle borderStyle;
 @property Float32 platformSizeScale;
 
-+ (instancetype)defaultStyleWithDelegate:(SubRenderer*)delegate;
-- (instancetype)initWithDictionary:(NSDictionary<NSString*,id> *)ssaDict scriptVersion:(UInt8)version delegate:(SubRenderer *)renderer;
++ (instancetype)defaultStyleWithDelegate:(id<SubRenderer>)delegate;
+- (instancetype)initWithDictionary:(NSDictionary<NSString*,id> *)ssaDict scriptVersion:(UInt8)version delegate:(id<SubRenderer>)renderer;
 @end
 
 @interface SubContext : NSObject {
@@ -126,7 +126,7 @@ extern NSString * const kSubDefaultFontName;
 @property CGFloat resX;
 @property CGFloat resY;
 
-- (instancetype)initWithScriptType:(SubType)type headers:(nullable NSDictionary<NSString*,NSString*> *)headers styles:(nullable NSArray<NSDictionary<NSString*,NSString*>*> *)styles delegate:(nullable SubRenderer*)delegate;
+- (instancetype)initWithScriptType:(SubType)type headers:(nullable NSDictionary<NSString*,NSString*> *)headers styles:(nullable NSArray<NSDictionary<NSString*,NSString*>*> *)styles delegate:(nullable id<SubRenderer>)delegate;
 -(SubStyle*)styleForName:(NSString *)name;
 @property (readonly, copy) NSDictionary<NSString*,SubStyle*> *styles;
 @property (readonly, copy) NSDictionary<NSString*,NSString*> *headers;

@@ -25,7 +25,7 @@
 #import "SubParsing.h"
 #import "SubRenderer.h"
 
-@interface SubHTMLExporter : SubRenderer
+@interface SubHTMLExporter : NSObject <SubRenderer>
 {
 	SubContext *sc;
 	NSMutableString *html;
@@ -57,6 +57,9 @@
 
 @implementation SubHTMLExporter
 @synthesize html;
+- (CGFloat)aspectRatio {
+	return 4.0/3.0;
+}
 
 -(instancetype)init
 {
@@ -193,6 +196,10 @@ NSString *htmlfilter(NSString *s)
 		default:
 			NSLog(@"unimplemented tag type %d",tag);
 	}
+}
+
+- (void)renderPacket:(nonnull NSString *)packet inContext:(nonnull CGContextRef)c size:(CGSize)size { 
+	//do nothing. Shouldn't even be called...
 }
 
 -(void)htmlifyDivArray:(NSArray<SubRenderDiv*>*)divs

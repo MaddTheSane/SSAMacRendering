@@ -22,12 +22,12 @@
 #import <Cocoa/Cocoa.h>
 #import "SubRenderer.h"
 
-@class SubRenderer, SubContext;
+@class SubContext;
 
 NS_ASSUME_NONNULL_BEGIN
 
 NS_DEPRECATED_MAC(10_0, 10_8)
-@interface SubATSUIRenderer : SubRenderer {
+@interface SubATSUIRenderer : NSObject <SubRenderer> {
 	SubContext *context;
 
 	ATSUTextLayout layout;
@@ -40,7 +40,6 @@ NS_DEPRECATED_MAC(10_0, 10_8)
 }
 - (instancetype)init UNAVAILABLE_ATTRIBUTE;
 -(nullable instancetype)initWithScriptType:(int)type header:(nullable NSString*)header videoWidth:(CGFloat)width videoHeight:(CGFloat)height NS_DESIGNATED_INITIALIZER;
--(void)renderPacket:(NSString *)packet inContext:(CGContextRef)c width:(CGFloat)cWidth height:(CGFloat)cHeight;
 @end
 
 NS_ASSUME_NONNULL_END

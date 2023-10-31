@@ -53,7 +53,7 @@ func createPDF(fromFile inFile: String, toDirectory dir: String) {
 			if let sl = ss.getSerializedPacket(),
 				!sl.line.isEmpty {
 				pdfA.beginPDFPage(nil)
-				s.render(packet: sl.line, in: pdfA, width: rect.width, height: rect.height)
+				s.render(packet: sl.line, in: pdfA, size: rect.size)
 				pdfA.endPDFPage()
 			}
 		})

@@ -269,7 +269,7 @@ void SubParseSSAFile(NSString *ssastr, NSDictionary<NSString*,NSString*> **heade
 %%machine SSAtag;
 %%write data;
 
-NSArray *SubParsePacket(NSString *packet, SubContext *context, SubRenderer *delegate)
+NSArray *SubParsePacket(NSString *packet, SubContext *context, id<SubRenderer> delegate)
 {
 	packet = SubStandardizeStringNewlines(packet);
 	NSArray *lines = (context->scriptType == kSubTypeSRT) ? [NSArray arrayWithObject:[packet substringToIndex:[packet length]-1]] : [packet componentsSeparatedByString:@"\n"];

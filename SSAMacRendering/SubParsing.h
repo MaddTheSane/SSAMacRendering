@@ -25,7 +25,8 @@
 __BEGIN_DECLS
 NS_ASSUME_NONNULL_BEGIN
 
-@class SubSerializer, SubRenderer, SubRenderSpan;
+@class SubSerializer, SubRenderSpan;
+@protocol SubRenderer;
 
 typedef NS_ENUM(uint16_t, SubRenderAnimations) {
 	SubRenderAnimationNone = 0,
@@ -106,7 +107,7 @@ extern void  SubParseASSAlignment(UInt8 a, SubAlignmentH *alignH, SubAlignmentV 
 extern BOOL  SubParseFontVerticality(NSString *_Nonnull* _Nonnull fontname) NS_REFINED_FOR_SWIFT;
 	
 extern void     SubParseSSAFile(NSString *ssa, NSDictionary<NSString*,NSString*> *_Nonnull*_Nonnull headers, NSArray<NSDictionary<NSString*,NSString*>*> *_Nonnull*_Nullable styles, NSArray<NSDictionary<NSString*,NSString*>*> *_Nonnull*_Nullable subs) NS_REFINED_FOR_SWIFT;
-extern NSArray<SubRenderDiv*> *SubParsePacket(NSString *packet, SubContext *context, SubRenderer *_Nullable delegate);
+extern NSArray<SubRenderDiv*> *SubParsePacket(NSString *packet, SubContext *context, id<SubRenderer> _Nullable delegate);
 
 NS_ASSUME_NONNULL_END
 __END_DECLS
