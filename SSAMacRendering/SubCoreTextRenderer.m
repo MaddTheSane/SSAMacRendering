@@ -231,6 +231,157 @@ static NSString * const Scale;
 	return self;
 }
 
+typedef NS_ENUM(int8_t, fill_or_stroke) {
+	fillc,
+	strokec
+};
+
+static void SetColor(CGContextRef c, fill_or_stroke whichcolor, CGColorRef col)
+{
+	if (whichcolor == fillc) CGContextSetFillColorWithColor(c, col);
+	else CGContextSetStrokeColorWithColor(c, col);
+}
+
+typedef NS_ENUM(int, SubTextLayer) {
+	SubTextLayerShadow,
+	SubTextLayerOutline,
+	SubTextLayerPrimary,
+	SubTextLayerPrimaryUnstyled
+};
+
+static BOOL SetupCGForSpan(CGContextRef c, SubCoreTextSpanExtra *spanEx, SubCoreTextSpanExtra *lastSpanEx, SubRenderDiv *div, SubTextLayer textType, BOOL endLayer)
+{
+#define if_different(x) if (!lastSpanEx || lastSpanEx-> x != spanEx-> x)
+	
+	switch (textType) {
+		case SubTextLayerShadow:
+			if_different(shadowColor) {
+				if (endLayer) {
+					CGContextEndTransparencyLayer(c);
+				}
+
+				SetColor(c, fillc, spanEx->shadowColor);
+				SetColor(c, strokec, spanEx->shadowColor);
+				if (CGColorGetAlpha(spanEx->shadowColor) != 1.) {
+					endLayer = YES;
+					CGContextBeginTransparencyLayer(c, NULL);
+				} else {
+					endLayer = NO;
+				}
+			}
+			break;
+			
+		case SubTextLayerOutline:
+			if_different(outlineRadius) {
+				CGContextSetLineWidth(c, spanEx->outlineRadius ? (spanEx->outlineRadius*2. + .5) : 0.);
+			}
+			if_different(outlineColor) { 
+				SetColor(c, (div->styleLine->borderStyle == kSubBorderStyleNormal) ? strokec : fillc, spanEx->outlineColor);
+			}
+			
+			if_different(outlineAlpha) {
+				if (endLayer) {
+					CGContextEndTransparencyLayer(c);
+				}
+				CGContextSetAlpha(c, spanEx->outlineAlpha);
+				if (spanEx->outlineAlpha != 1.) {
+					endLayer = YES;
+					CGContextBeginTransparencyLayer(c, NULL);
+				} else {
+					endLayer = NO;
+				}
+			}
+				
+			break;
+		case SubTextLayerPrimary:
+			if_different(primaryColor) {
+				SetColor(c, fillc, spanEx->primaryColor);
+			}
+			
+			if_different(primaryAlpha) {
+				if (endLayer) {
+					CGContextEndTransparencyLayer(c);
+				}
+
+				CGContextSetAlpha(c, spanEx->primaryAlpha);
+				if (spanEx->primaryAlpha != 1.) {
+					endLayer = YES;
+					CGContextBeginTransparencyLayer(c, NULL);
+				} else {
+					endLayer = NO;
+				}
+			}
+			break;
+			
+		case SubTextLayerPrimaryUnstyled:
+			break;
+	}
+	
+	return endLayer;
+}
+
+static void drawShapePart(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCoreTextSpanExtra *firstSpanEx, SubTextLayer textType)
+{
+	const CGPathDrawingMode textModes[] = {kCGPathFillStroke, kCGPathStroke, kCGPathFill, kCGPathFill};
+	SubCoreTextSpanExtra *lastSpanEx = nil;
+	BOOL endLayer = NO, multipleParts = !!(div->render_complexity & renderMultipleParts);
+	if (!multipleParts) {
+		endLayer = SetupCGForSpan(c, firstSpanEx, lastSpanEx, div, textType, endLayer);
+	}
+	endLayer = SetupCGForSpan(c, firstSpanEx, lastSpanEx, div, textType, endLayer);
+
+	CGContextAddPath(c, path);
+	CGContextDrawPath(c, textModes[textType]);
+
+	if (endLayer) {
+		CGContextEndTransparencyLayer(c);
+	}
+}
+
+static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCoreTextSpanExtra *firstSpanEx)
+{
+	BOOL drawShadow, drawOutline, clearOutlineInnerStroke;
+	BOOL endLayer = NO;
+	if (div->render_complexity & renderMultipleParts) {
+		drawShadow = drawOutline = clearOutlineInnerStroke = YES;
+	} else {
+		drawShadow = div->styleLine->borderStyle == kSubBorderStyleNormal && firstSpanEx->shadowDist;
+		drawOutline= div->styleLine->borderStyle != kSubBorderStyleNormal || firstSpanEx->outlineRadius;
+		clearOutlineInnerStroke = firstSpanEx->primaryAlpha < 1.;
+	}
+
+	
+	if (drawShadow) {
+		if (!(div->render_complexity & renderManualShadows)) {
+			endLayer = YES;
+			CGContextSetShadowWithColor(c, CGSizeMake(firstSpanEx->shadowDist + .5, -(firstSpanEx->shadowDist + .5)), 0, firstSpanEx->shadowColor);
+			CGContextBeginTransparencyLayer(c, NULL);
+		} else {
+			drawShapePart(c, path, div, firstSpanEx, SubTextLayerShadow);
+		}
+	}
+	
+	if (drawOutline) {
+		if (clearOutlineInnerStroke) {
+			CGContextBeginTransparencyLayer(c, NULL);
+		}
+		drawShapePart(c, path, div, firstSpanEx, SubTextLayerOutline);
+		if (clearOutlineInnerStroke) {
+			CGContextSetBlendMode(c, kCGBlendModeClear);
+			drawShapePart(c, path, div, firstSpanEx, SubTextLayerPrimaryUnstyled);
+			CGContextSetBlendMode(c, kCGBlendModeNormal);
+			CGContextEndTransparencyLayer(c);
+		}
+	}
+	
+	drawShapePart(c, path, div, firstSpanEx, SubTextLayerPrimary);
+	
+	if (endLayer) {
+		CGContextEndTransparencyLayer(c);
+		CGContextSetShadowWithColor(c, CGSizeMake(0,0), 0, NULL);
+	}
+}
+
 - (void)renderPacket:(NSString *)packet inContext:(CGContextRef)c width:(CGFloat)cWidth height:(CGFloat)cHeight
 {
 	NSArray<SubRenderDiv*>* divs = SubParsePacket(packet, context, self);

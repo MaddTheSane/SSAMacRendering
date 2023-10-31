@@ -10,8 +10,6 @@
 #import "SubRenderer.h"
 #import "SubContext.h"
 
-@class SubContext;
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SubCoreTextRenderer : SubRenderer
