@@ -121,7 +121,6 @@ ScriptCode GetFilenameLanguage(CFStringRef _Nonnull filename);
 ComponentResult LoadExternalSubtitlesFromFileDataRef(Handle dataRef, OSType dataRefType, Movie theMovie);
 void SetSubtitleMediaHandlerTransparent(MediaHandler mh);
 Track CreatePlaintextSubTrack(Movie theMovie, ImageDescriptionHandle imgDesc, TimeScale timescale, Handle dataRef, OSType dataRefType, FourCharCode subType, Handle imageExtension, Rect movieBox);
-
 #endif
 
 __END_DECLS

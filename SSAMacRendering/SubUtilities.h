@@ -39,7 +39,7 @@ BOOL SubDifferentiateLatin12(const unsigned char *data, NSInteger length);
 
 const unichar * __nullable SubUnicodeForString(NSString *str, NSData * __nonnull __strong* __nullable datap);
 //extern NSBezierPath *SubParseSubShapesWithString(NSString *aStr) NS_SWIFT_NAME(parseSubShapes(string:));
-extern CGPathRef CreateSubParseSubShapesWithString(NSString *aStr, const CGAffineTransform * __nullable m) CF_RETURNS_RETAINED;
+extern CGPathRef CreateSubParseSubShapesWithString(NSString *aStr, const CGAffineTransform * __nullable m) CF_RETURNS_RETAINED NS_SWIFT_NAME(parseSubShapes(with:transform:));
 
 NS_ASSUME_NONNULL_END
 

@@ -53,6 +53,7 @@ func createPDF(fromFile inFile: String, toDirectory dir: URL) {
 	pdfA.closePDF()
 }
 
+#if false
 func createPDFWithATSUI(fromFile inFile: String, toDirectory dir: URL) {
 	let ss = SubSerializer()
 	var rect = CGRect()
@@ -94,14 +95,14 @@ func createPDFWithATSUI(fromFile inFile: String, toDirectory dir: URL) {
 	}
 	pdfA.closePDF()
 }
+#endif
 
-
-@NSApplicationMain
+@main
 class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 		createPDF(fromFile: "/Users/cwbetts/mm.ssa", toDirectory: URL(fileURLWithPath: "/Users/cwbetts/Movies"))
-		createPDFWithATSUI(fromFile: "/Users/cwbetts/mm.ssa", toDirectory: URL(fileURLWithPath: "/Users/cwbetts/Movies"))
+//		createPDFWithATSUI(fromFile: "/Users/cwbetts/mm.ssa", toDirectory: URL(fileURLWithPath: "/Users/cwbetts/Movies"))
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {

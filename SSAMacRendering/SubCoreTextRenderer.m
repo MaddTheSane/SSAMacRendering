@@ -285,7 +285,7 @@ static NSString * const Scale;
 	
 	if (!s->platformSizeScale) s->platformSizeScale = GetWinCTFontSizeScale((__bridge CTFontRef)(font));
 	CGFloat size = s->size * s->platformSizeScale * screenScaleY; //FIXME: several other values also change relative to PlayRes but aren't handled
-	newFont = [[NSFontManager sharedFontManager] convertFont:font toSize:size];
+	newFont = [[NSFontManager sharedFontManager] convertFont:newFont toSize:size];
 
 	if (s->scaleX != 100. || s->scaleY != 100.) {
 		NSAffineTransform*d = [NSAffineTransform transform];
@@ -498,10 +498,12 @@ typedef NS_OPTIONS(UInt8, RenderOptions) {
 		case tag_2c:
 			colorv();
 			Codecprintf(NULL, "Unimplemented SSA tag '2c'\n");
+			CGColorRelease(color);
 			break;
 		case tag_2a:
 			colorv();
 			Codecprintf(NULL, "Unimplemented SSA tag '2a'\n");
+			CGColorRelease(color);
 			break;
 		case tag_t:
 			Codecprintf(NULL, "Unimplemented SSA tag 't'\n");
@@ -512,6 +514,9 @@ typedef NS_OPTIONS(UInt8, RenderOptions) {
 			break;
 		case tag_fad:
 			Codecprintf(NULL, "Unimplemented SSA tag 'fad'\n");
+			break;
+		case tag_fade:
+			Codecprintf(NULL, "Unimplemented SSA tag 'fade'\n");
 			break;
 		default:
 			Codecprintf(NULL, "Unimplemented SSA tag #%d\n",tag);

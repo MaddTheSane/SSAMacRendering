@@ -247,7 +247,10 @@ BOOL IsScriptASS(NSDictionary *headers)
 @implementation SubRenderer
 - (instancetype)init
 {
-	return self = [super init];
+	if (self = [super init]) {
+		
+	}
+	return self;
 }
 
 -(void)didCompleteStyleParsing:(SubStyle*)s {assert(0);}
