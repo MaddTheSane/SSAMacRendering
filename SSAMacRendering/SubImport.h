@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SubSerializer : NSObject
 {
 @private
-	//! input lines, sorted by 1. beginning time 2. original insertion order
+	//! input lines, sorted by: 1. beginning time, 2. original insertion order.
 	NSMutableArray<SubLine*> *lines;
 	BOOL finished;
 	
@@ -104,7 +104,9 @@ NSString *_Nullable SubLoadSSAFromPath(NSString *path, SubSerializer *ss);
 NSString *_Nullable SubLoadSSAFromURL(NSURL *path, SubSerializer *ss);
 NSString *_Nullable SubLoadSSAFromNSData(NSData *data, SubSerializer *ss);
 void SubLoadSRTFromPath(NSString *path, SubSerializer *ss);
+void SubLoadSRTFromURL(NSURL *path, SubSerializer *ss);
 void SubLoadSMIFromPath(NSString *path, SubSerializer *ss, int subCount);
+void SubLoadSMIFromURL(NSURL *path, SubSerializer *ss, int subCount);
 
 __END_DECLS
 
@@ -115,13 +117,7 @@ NS_ASSUME_NONNULL_END
 
 __BEGIN_DECLS
 
-
 ScriptCode GetFilenameLanguage(CFStringRef _Nonnull filename);
-#if !__LP64__
-ComponentResult LoadExternalSubtitlesFromFileDataRef(Handle dataRef, OSType dataRefType, Movie theMovie);
-void SetSubtitleMediaHandlerTransparent(MediaHandler mh);
-Track CreatePlaintextSubTrack(Movie theMovie, ImageDescriptionHandle imgDesc, TimeScale timescale, Handle dataRef, OSType dataRefType, FourCharCode subType, Handle imageExtension, Rect movieBox);
-#endif
 
 __END_DECLS
 
@@ -130,6 +126,7 @@ __END_DECLS
 
 CF_ASSUME_NONNULL_BEGIN
 
+// TODO: make this work/use shared_ptr or similar?
 class CXXSubSerializer
 {
 	void *_Nullable priv;
