@@ -22,7 +22,6 @@
 #ifndef __COMMONUTILS_H__
 #define __COMMONUTILS_H__
 
-//#include <QuickTime/QuickTime.h>
 #include <CoreServices/CoreServices.h>
 #include <CoreText/CTFont.h>
 #include <stdbool.h>
@@ -49,21 +48,9 @@ ScriptCode ISO639_2ToQTLangCode(const char *lang);
 //! does the current process break if we return errors in Preflight?
 	bool IsForcedDecodeEnabled(void);
 
-//! is this font name known to be incompatible with ATSUI?
-bool ShouldImportFontFileName(const char *filename);
-	
-//! can we safely create an HE-AAC track with a frequency of more than 48khz?
-	bool ShouldPlayHighFreqSBR(void);
-	
 //! CFPreferencesCopyAppValue() wrapper which checks the type of the value returned
 CFPropertyListRef CopyPreferencesValueTyped(CFStringRef key, CFTypeID type) CF_RETURNS_RETAINED;
 
-//void *fast_realloc_with_padding(void *ptr, unsigned int *size, unsigned int min_size);
-
-//! postprocess RGBA+8-bit to not look terrible when displayed with 'transparent' blend mode
-void ConvertImageToQDTransparent(Ptr baseAddr, OSType pixelFormat, int rowBytes, int width, int height);
-	
-	
 extern CGFloat GetWinCTFontSizeScale(CTFontRef font);
 
 #define PERIAN_PREF_DOMAIN CFSTR("org.perian.Perian")

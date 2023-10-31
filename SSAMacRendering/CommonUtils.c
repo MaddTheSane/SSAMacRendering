@@ -204,103 +204,6 @@ ScriptCode ISO639_2ToQTLangCode(const char *lang)
 	return langUnspecified;
 }
 
-#if 0
-
-#define MP4ESDescrTag                   0x03
-#define MP4DecConfigDescrTag            0x04
-#define MP4DecSpecificDescrTag          0x05
-
-// based off of mov_mp4_read_descr_len from mov.c in ffmpeg's libavformat
-static unsigned readDescrLen(GetByteContext *g)
-{
-	unsigned len = 0;
-	int count = 4;
-	while (count--) {
-		uint8_t c = bytestream2_get_byte(g);
-		len = (len << 7) | (c & 0x7f);
-		if (!(c & 0x80))
-			break;
-	}
-	return len;
-}
-
-// based off of mov_mp4_read_descr from mov.c in ffmpeg's libavformat
-static unsigned readDescr(GetByteContext *g, int *tag)
-{
-	*tag = bytestream2_get_byte(g);
-	return readDescrLen(g);
-}
-
-// based off of mov_read_esds from mov.c in ffmpeg's libavformat
-ComponentResult ReadESDSDescExt(Handle descExt, UInt8 **buffer, int *size)
-{
-	UInt8 *esds = (UInt8 *)*descExt;
-	UInt8 *extradata;
-	int tag, len;
-
-	GetByteContext g;
-	bytestream2_init(&g, esds, GetHandleSize(descExt));
-	
-	bytestream2_skip(&g, 4); // version + flags
-	readDescr(&g, &tag);
-	bytestream2_skip(&g, 2); // ID
-	if (tag == MP4ESDescrTag)
-		bytestream2_skip(&g, 1); // priority
-	
-	readDescr(&g, &tag);
-	if (tag == MP4DecConfigDescrTag) {
-		bytestream2_skip(&g, 1);	// object type id
-		bytestream2_skip(&g, 1);	// stream type
-		bytestream2_skip(&g, 3);	// buffer size db
-		bytestream2_skip(&g, 4);	// max bitrate
-		bytestream2_skip(&g, 4);	// average bitrate
-		
-		len = readDescr(&g, &tag);
-		if (tag == MP4DecSpecificDescrTag) {
-			extradata = av_mallocz(len + FF_INPUT_BUFFER_PADDING_SIZE);
-			if (extradata) {
-				if (bytestream2_get_buffer(&g, extradata, len) != len) {
-					av_free(extradata);
-					return paramErr;
-				}
-				
-				*buffer = extradata;
-				*size = len;
-			}
-		}
-	}
-	
-	return noErr;
-}
-
-int isImageDescriptionExtensionPresent(ImageDescriptionHandle desc, FourCharCode type)
-{
-	ImageDescriptionPtr d = *desc;
-	uint8_t *p = (uint8_t *)d;
-	
-	GetByteContext g;
-	bytestream2_init(&g, p, GetHandleSize((Handle)desc));
-	bytestream2_skip(&g, sizeof(ImageDescription));
-	
-	//read next description, need 8 bytes for size and type
-	while(bytestream2_get_bytes_left(&g))
-	{
-		unsigned len;
-		FourCharCode rtype;
-		
-		len   = bytestream2_get_be32(&g);
-		rtype = bytestream2_get_be32(&g);
-		
-		if(rtype == type && (len - 8) <= bytestream2_get_bytes_left(&g))
-			return 1;
-		
-		bytestream2_skip(&g, len - 8);
-	}
-	return 0;
-}
-
-#endif
-
 static const CFStringRef defaultFrameDroppingList[] = {
 	CFSTR("Finder"),
 	CFSTR("Front Row"),
@@ -399,31 +302,6 @@ bool IsForcedDecodeEnabled(void)
 	return forced;
 }
 
-static int GetSystemMinorVersion(void)
-{
-	static SInt32 minorVersion = -1;
-	if (minorVersion == -1)
-		Gestalt(gestaltSystemVersionMinor, &minorVersion);
-	
-	return minorVersion;
-}
-
-// this could be a defaults setting, but no real call for it yet
-bool ShouldImportFontFileName(const char *filename)
-{
-	// match DynaFont Labs (1997) fonts, which are in many files
-	// and completely break ATSUI on different OS versions
-	// FIXME: This font works when in ~/Library/Fonts (!). Check it again with CoreText.
-	return !(GetSystemMinorVersion() >= 6 && fnmatch("DF*.ttc", filename, 0) == 0);
-}
-
-// does the system support HE-AAC with a base frequency over 32khz?
-// 10.6.3 does, nothing else does. this may be conflated with some encoder bugs.
-bool ShouldPlayHighFreqSBR(void)
-{
-	return 0;
-}
-
 CFPropertyListRef CopyPreferencesValueTyped(CFStringRef key, CFTypeID type)
 {
 	CFPropertyListRef val = CFPreferencesCopyAppValue(key, PERIAN_PREF_DOMAIN);
@@ -434,42 +312,4 @@ CFPropertyListRef CopyPreferencesValueTyped(CFStringRef key, CFTypeID type)
 	}
 	
 	return val;
-}
-
-#if 0
-void *fast_realloc_with_padding(void *ptr, unsigned int *size, unsigned int min_size)
-{
-	void *res = ptr;
-	av_fast_malloc(&res, size, min_size + FF_INPUT_BUFFER_PADDING_SIZE);
-	if (res) memset(res + min_size, 0, FF_INPUT_BUFFER_PADDING_SIZE);
-	return res;
-}
-#endif
-
-// Map 8-bit alpha (graphicsModePreBlackAlpha) to 1-bit alpha (transparent)
-// Pretty much this is just mapping all opaque black to (1,1,1,255)
-// Leaves ugly borders where AAing turned into opaque colors, but that's harder to deal with
-void ConvertImageToQDTransparent(Ptr baseAddr, OSType pixelFormat, int rowBytes, int width, int height)
-{
-	UInt32 alphaMask = EndianU32_BtoN((pixelFormat == k32ARGBPixelFormat) ? 0xFF000000 : 0xFF),
-		 replacement = EndianU32_BtoN((pixelFormat == k32ARGBPixelFormat) ? 0xFF010101 : 0x010101FF);
-	Ptr p = baseAddr;
-	int y, x;
-	
-	for (y = 0; y < height; y++) {
-		UInt32 *p32 = (UInt32*)p;
-		for (x = 0; x < width; x++) {
-			UInt32 px = *p32;
-			
-			// if px is black, and opaque (alpha == 255)
-			if (!(px & ~alphaMask) && ((px & alphaMask) == alphaMask)) {
-				// then set it to not-quite-black so it'll show up
-				*p32 = replacement;
-			}
-			
-			p32++;
-		}
-		
-		p += rowBytes;
-	}
 }
