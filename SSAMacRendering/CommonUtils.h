@@ -30,18 +30,6 @@
 extern "C" {
 #endif
 
-//! ISO 639-1 to language ID expected by SetMediaLanguage
-ScriptCode ISO639_1ToQTLangCode(const char *lang);
-
-//! ISO 639-2 to language ID expected by SetMediaLanguage
-ScriptCode ISO639_2ToQTLangCode(const char *lang);
-
-// mallocs the buffer and copies the codec-specific description to it, in the same format
-// as is specified in Matroska and is used in libavcodec
-//ComponentResult ReadESDSDescExt(Handle descExt, UInt8 **buffer, int *size);
-
-//int isImageDescriptionExtensionPresent(ImageDescriptionHandle desc, FourCharCode type);
-
 //! does the current process break if we signal droppable frames?
 	bool IsFrameDroppingEnabled(void);
 

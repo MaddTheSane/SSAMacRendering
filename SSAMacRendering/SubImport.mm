@@ -33,37 +33,6 @@
 
 #pragma mark C
 
-// if the subtitle filename is something like title.en.srt or movie.fre.srt
-// this function detects it and returns the subtitle language
-ScriptCode GetFilenameLanguage(CFStringRef filename)
-{
-	ScriptCode lang = langUnspecified;
-	@autoreleasepool {
-		NSRange findResult;
-		NSString *baseName = NULL;
-		NSString *langStr = NULL;
-		
-		// find and strip the extension
-		//findResult = CFStringFind(filename, CFSTR("."), kCFCompareBackwards);
-		//findResult.length = findResult.location;
-		//findResult.location = 0;
-		baseName = [((__bridge NSString*)filename) stringByDeletingPathExtension];
-		
-		// then find the previous period
-		findResult = [baseName rangeOfString:@"." options:NSBackwardsSearch];
-		findResult.location++;
-		findResult.length = baseName.length - findResult.location;
-		langStr = [baseName substringWithRange:findResult];
-		
-		// check for 3 char language code
-		if (langStr.length == 3)
-			lang = ISO639_2ToQTLangCode([langStr UTF8String]);
-		else if (langStr.length == 2) // and for a 2 char language code
-			lang = ISO639_1ToQTLangCode([langStr UTF8String]);
-	}
-	return lang;
-}
-
 static NSString *MatroskaPacketizeLine(NSDictionary *sub, NSInteger n)
 {
 	NSString *name = [sub objectForKey:@"Name"];

@@ -115,12 +115,6 @@ NS_ASSUME_NONNULL_END
 
 #endif // ___OBJC__
 
-__BEGIN_DECLS
-
-ScriptCode GetFilenameLanguage(CFStringRef _Nonnull filename);
-
-__END_DECLS
-
 #ifdef __cplusplus
 #include <string>
 
