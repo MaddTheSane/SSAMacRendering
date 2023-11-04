@@ -23,30 +23,41 @@ void SubRendererRenderPacket(SubRendererRef s, CGContextRef c, CFStringRef str, 
 	}
 }
 
-void SubRendererPrerollFromHeader(char *header, int headerLen)
+void SubRendererPrerollFromCFHeader(CFStringRef header)
 {
-	SubRendererRef s = SubRendererCreate(header!=NULL, header, headerLen, 640, 480);
-	
+	id<SubRenderer> s = [[SubCoreTextRenderer alloc] initWithScriptType:header ? kSubTypeSSA : kSubTypeSRT header:(__bridge NSString *)(header) videoWidth:640 videoHeight:480];
 	
 	CGColorSpaceRef csp = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 	void *buf = malloc(640 * 480 * 4);
 	CGContextRef c = CGBitmapContextCreate(buf,640,480,8,640 * 4,csp,kCGImageAlphaPremultipliedFirst);
 	
-	if (!headerLen) {
-		SubRendererRenderPacket(s, c, (CFStringRef)@"Abcde .", 640, 480);
+	if (!header) {
+		[s renderPacket:@"Abcde ." inContext:c size:CGSizeMake(640, 480)];
 	} else {
-		NSArray<SubStyle*> *styles = [[((__bridge id<SubRenderer>)(s)) context]->styles allValues];
+		NSArray<SubStyle*> *styles = [[s context]->styles allValues];
 		
 		for (SubStyle *sty in styles) {
 			NSString *line = [NSString stringWithFormat:@"0,0,%@,,0,0,0,,Abcde .", sty->name];
-			SubRendererRenderPacket(s, c, (__bridge CFStringRef)line, 640, 480);
+			[s renderPacket:line inContext:c size:CGSizeMake(640, 480)];
 		}
 	}
 	
 	CGContextRelease(c);
 	free(buf);
 	CGColorSpaceRelease(csp);
-	SubRendererDispose(s);
+}
+
+void SubRendererPrerollFromHeader(char *header, int headerLen)
+{
+	CFStringRef head = NULL;
+	if (header) {
+		head = CFStringCreateWithBytes(kCFAllocatorNull, (UInt8*)header, headerLen, kCFStringEncodingUTF8, false);
+	}
+	
+	SubRendererPrerollFromCFHeader(head);
+	if (head) {
+		CFRelease(head);
+	}
 }
 
 void SubRendererDispose(SubRendererRef s)

@@ -72,7 +72,8 @@ typedef struct CF_BRIDGED_TYPE(id) __SubRendererPtr *SubRendererRef CF_SWIFT_UNA
 // these are actually implemented in SubATSUIRenderer.m
 extern SubRendererRef __nullable SubRendererCreate(bool isSSA,  char * _Nullable header, size_t headerLen, int width, int height) CF_RETURNS_RETAINED;
 extern SubRendererRef __nullable SubRendererCreateCF(bool isSSA, __nullable CFStringRef header, int width, int height) CF_RETURNS_RETAINED;
-extern void SubRendererPrerollFromHeader(char *header, int headerLen);
+extern void SubRendererPrerollFromHeader(char * _Nullable header, int headerLen);
+extern void SubRendererPrerollFromCFHeader(CFStringRef _Nullable header);
 extern void SubRendererRenderPacket(SubRendererRef s, CGContextRef c, CFStringRef str, int cWidth, int cHeight);
 extern void SubRendererDispose(CF_CONSUMED SubRendererRef s) CF_SWIFT_UNAVAILABLE("Release is called automatically");
 
