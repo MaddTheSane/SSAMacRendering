@@ -9,8 +9,7 @@
 import Foundation
 import CoreText.CTFontManager
 
-public struct FontManager {
-	private init() {}
+public enum FontManager {
 	
 	/// Sets the auto-activation for the specified bundle identifier.
 	/// SDKs

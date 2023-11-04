@@ -121,21 +121,21 @@ extension CTFont {
 	/// The point size of the font reference.
 	///
 	/// This is the point size provided when the font was created.
-	public var size: CGFloat {
+	@inlinable public var size: CGFloat {
 		return CTFontGetSize(self)
 	}
 	
 	/// The transformation matrix of the font.
 	///
 	/// This is the matrix that was provided when the font was created.
-	public var matrix: CGAffineTransform {
+	@inlinable public var matrix: CGAffineTransform {
 		return CTFontGetMatrix(self)
 	}
 	
 	/// The symbolic font traits.
 	///
 	/// This getter returns the symbolic traits of the font. This is equivalent to the `kCTFontSymbolicTrait` of traits dictionary. See *CTFontTraits.h* for a definition of the font traits.
-	public var symbolicTraits: CTFontSymbolicTraits {
+	@inlinable public var symbolicTraits: CTFontSymbolicTraits {
 		return CTFontGetSymbolicTraits(self)
 	}
 	
@@ -153,22 +153,22 @@ extension CTFont {
 	//--------------------------------------------------------------------------
 	
 	/// The PostScript name.
-	public var postScriptName: String {
+	@inlinable public var postScriptName: String {
 		return CTFontCopyPostScriptName(self) as String
 	}
 	
 	/// The family name.
-	public var familyName: String {
+	@inlinable public var familyName: String {
 		return CTFontCopyFamilyName(self) as String
 	}
 	
 	/// The full name.
-	public var fullName: String {
+	@inlinable public var fullName: String {
 		return CTFontCopyFullName(self) as String
 	}
 	
 	/// The localized display name of the font
-	public var displayName: String {
+	@inlinable public var displayName: String {
 		return CTFontCopyDisplayName(self) as String
 	}
 
@@ -201,7 +201,7 @@ extension CTFont {
 	/// the Unicode character set of the font.
 	///
 	/// This character set covers the nominal referenced by the font's Unicode cmap table (or equivalent).
-	public var characterSet: CharacterSet {
+	@inlinable public var characterSet: CharacterSet {
 		return CTFontCopyCharacterSet(self) as CharacterSet
 	}
 	
@@ -240,77 +240,77 @@ extension CTFont {
 	/// The scaled font ascent metric.
 	///
 	/// The font ascent metric scaled based on the point size and matrix of the font reference.
-	public var ascent: CGFloat {
+	@inlinable public var ascent: CGFloat {
 		return CTFontGetAscent(self)
 	}
 	
 	/// The scaled font descent metric.
 	///
 	/// The font descent metric scaled based on the point size and matrix of the font reference.
-	public var descent: CGFloat {
+	@inlinable public var descent: CGFloat {
 		return CTFontGetDescent(self)
 	}
 	
 	/// The scaled font leading metric.
 	///
 	/// The font leading metric scaled based on the point size and matrix of the font reference.
-	public var leading: CGFloat {
+	@inlinable public var leading: CGFloat {
 		return CTFontGetLeading(self)
 	}
 	
 	/// The units per em metric.
 	///
 	/// The units per em of the font.
-	public var unitsPerEm: UInt32 {
+	@inlinable public var unitsPerEm: UInt32 {
 		return CTFontGetUnitsPerEm(self)
 	}
 	
 	/// The number of glyphs.
 	///
 	/// The number of glyphs in the font.
-	public var countOfGlyphs: Int {
+	@inlinable public var countOfGlyphs: Int {
 		return CTFontGetGlyphCount(self)
 	}
 	
 	/// The scaled bounding box.
 	///
 	/// The design bounding box of the font, which is the rectangle defined by *xMin*, *yMin*, *xMax*, and *yMax* values for the font.
-	public var boundingBox: CGRect {
+	@inlinable public var boundingBox: CGRect {
 		return CTFontGetBoundingBox(self)
 	}
 	
 	/// The scaled underline position.
 	///
 	/// The font underline position metric scaled based on the point size and matrix of the font reference.
-	public var underlinePosition: CGFloat {
+	@inlinable public var underlinePosition: CGFloat {
 		return CTFontGetUnderlinePosition(self)
 	}
 	
 	/// The scaled underline thickness metric.
 	///
 	/// The font underline thickness metric scaled based on the point size and matrix of the font reference.
-	public var underlineThickness: CGFloat {
+	@inlinable public var underlineThickness: CGFloat {
 		return CTFontGetUnderlineThickness(self)
 	}
 	
 	/// The slant angle of the font.
 	///
 	/// The transformed slant angle of the font. This is equivalent to the italic or caret angle with any skew from the transformation matrix applied.
-	public var slantAngle: CGFloat {
+	@inlinable public var slantAngle: CGFloat {
 		return CTFontGetSlantAngle(self)
 	}
 	
 	/// The cap height metric.
 	///
 	/// The font cap height metric scaled based on the point size and matrix of the font reference.
-	public var capHeight: CGFloat {
+	@inlinable public var capHeight: CGFloat {
 		return CTFontGetCapHeight(self)
 	}
 	
 	/// The X height metric.
 	///
 	/// The font X height metric scaled based on the point size and matrix of the font reference.
-	public var xHeight: CGFloat {
+	@inlinable public var xHeight: CGFloat {
 		return CTFontGetXHeight(self)
 	}
 	

@@ -32,7 +32,7 @@ extension CTFrame {
 	/// store range of characters that were originally requested
 	/// to fill the frame. If the function call is not successful,
 	/// then an empty range will be returned.
-	public var stringRange: CFRange {
+	@inlinable public var stringRange: CFRange {
 		return CTFrameGetStringRange(self)
 	}
 	
@@ -42,7 +42,7 @@ extension CTFrame {
 	/// This can be used to chain frames, as it returns the range of
 	/// characters that can be seen in the frame. The next frame would
 	/// start where this frame ends.
-	public var visibleStringRange: CFRange {
+	@inlinable public var visibleStringRange: CFRange {
 		return CTFrameGetVisibleStringRange(self)
 	}
 	
@@ -52,7 +52,7 @@ extension CTFrame {
 	}
 	
 	/// The path used to create the frame.
-	public var path: CGPath {
+	@inlinable public var path: CGPath {
 		return CTFrameGetPath(self)
 	}
 	
@@ -90,7 +90,7 @@ extension CTFrame {
 	/// This function will draw an entire frame to the context. Note
 	/// that this call may leave the context in any state and does not
 	/// flush it after the draw operation.
-	public func draw(in context: CGContext) {
+	@inlinable public func draw(in context: CGContext) {
 		CTFrameDraw(self, context)
 	}
 }

@@ -18,7 +18,7 @@ extension CTRun {
 	/// The number of glyphs that the run contains. It is totally
 	/// possible that this function could return a value of zero,
 	/// indicating that there are no glyphs in this run.
-	public var glyphCount: Int {
+	@inlinable public var glyphCount: Int {
 		return CTRunGetGlyphCount(self)
 	}
 	
@@ -43,7 +43,7 @@ extension CTRun {
 	/// text matrix can avoid expensive comparisons. Note that this
 	/// status is provided as a convenience, since this information is
 	/// not strictly necessary but can certainly be helpful.
-	public var status: Status {
+	@inlinable public var status: Status {
 		return CTRunGetStatus(self)
 	}
 	
@@ -315,7 +315,7 @@ public func CTRunGetStringIndices(_ run: CTRun, _ range: CFRange, _ buffer: Unsa
 	///
 	/// Returns the range of characters that originally spawned the
 	/// glyphs. If run is invalid, this will return an empty range.
-	public var stringRange: CFRange {
+	@inlinable public var stringRange: CFRange {
 		return CTRunGetStringRange(self)
 	}
 	
@@ -363,7 +363,7 @@ public func CTRunGetStringIndices(_ run: CTRun, _ range: CFRange, _ buffer: Unsa
 	/// To properly draw the glyphs in a run, the fields *'tx'* and *'ty'* of
 	/// the `CGAffineTransform` returned by this function should be set to
 	/// the current text position.
-	public var textMatrix: CGAffineTransform {
+	@inlinable public var textMatrix: CGAffineTransform {
 		return CTRunGetTextMatrix(self)
 	}
 	
@@ -384,7 +384,7 @@ public func CTRunGetStringIndices(_ run: CTRun, _ range: CFRange, _ buffer: Unsa
 	/// context after drawing. This call also expects a text matrix with
 	/// *'y'* values increasing from bottom to top; a flipped text matrix
 	/// may result in misplaced diacritics.
-	public func draw(in context: CGContext, range: CFRange) {
+	@inlinable public func draw(in context: CGContext, range: CFRange) {
 		CTRunDraw(self, context, range)
 	}
 }

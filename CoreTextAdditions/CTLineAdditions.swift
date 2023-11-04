@@ -67,7 +67,7 @@ public func CTLineCreateJustifiedLine(_ line: CTLine, _ justificationFactor: CGF
 	///
 	/// The total glyph count is equal to the sum of all of the glyphs in
 	/// the glyph runs forming the line.
-	public var glyphCount: Int {
+	@inlinable public var glyphCount: Int {
 		return CTLineGetGlyphCount(self)
 	}
 	
@@ -84,7 +84,7 @@ public func CTLineCreateJustifiedLine(_ line: CTLine, _ justificationFactor: CGF
 	/// A `CFRange` that contains the range over the backing store string
 	/// that spawned the glyphs. If the function fails for any reason, an
 	/// empty range will be returned.
-	public var stringRange: CFRange {
+	@inlinable public var stringRange: CFRange {
 		return CTLineGetStringRange(self)
 	}
 	
@@ -112,7 +112,7 @@ public func CTLineCreateJustifiedLine(_ line: CTLine, _ justificationFactor: CGF
 	/// a text matrix with *'y'* values increasing from bottom to top; a
 	/// flipped text matrix may result in misplaced diacritics.
 	/// - parameter context: The context to which the line will be drawn.
-	public func draw(in context: CGContext) {
+	@inlinable public func draw(in context: CGContext) {
 		CTLineDraw(self, context)
 	}
 	

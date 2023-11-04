@@ -11,12 +11,12 @@ import CoreText.CTTextTab
 
 extension CTTextTab {
 	/// The tab's text alignment value.
-	public var alignment: CTTextAlignment {
+	@inlinable public var alignment: CTTextAlignment {
 		return CTTextTabGetAlignment(self)
 	}
 	
 	/// The tab's ruler location relative to the back margin.
-	public var location: Double {
+	@inlinable public var location: Double {
 		return CTTextTabGetLocation(self)
 	}
 	

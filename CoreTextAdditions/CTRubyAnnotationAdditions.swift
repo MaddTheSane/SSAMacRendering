@@ -76,17 +76,17 @@ extension CTRubyAnnotation {
 	}
 	
 	/// the alignment value of the ruby annotation object.
-	public var alignment: Alignment {
+	@inlinable public var alignment: Alignment {
 		return CTRubyAnnotationGetAlignment(self)
 	}
 	
 	/// The overhang value of a ruby annotation object.
-	public var overhang: Overhang {
+	@inlinable public var overhang: Overhang {
 		return CTRubyAnnotationGetOverhang(self)
 	}
 	
 	/// The size factor of a ruby annotation object.
-	public var sizeFactor: CGFloat {
+	@inlinable public var sizeFactor: CGFloat {
 		return CTRubyAnnotationGetSizeFactor(self)
 	}
 	
