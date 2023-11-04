@@ -162,6 +162,8 @@ static NSString * const Scale;
 	CGColorSpaceRef srgbCSpace;
 }
 
+@synthesize context;
+
 + (CGFontRef)registerFontFromData:(NSData*)data error:(NSError * _Nullable __autoreleasing * _Nullable)error
 {
 	CGDataProviderRef datProvid = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
@@ -681,32 +683,6 @@ typedef NS_OPTIONS(UInt8, RenderOptions) {
 }
 
 @end
-
-#if 1
-SubRendererRef SubRendererCreate(bool isSSA, char *header, size_t headerLen, int width, int height)
-{
-	@autoreleasepool {
-		NSString *hdr = nil;
-		if (header)
-			hdr = [[NSString alloc] initWithBytesNoCopy:(void*)header length:headerLen encoding:NSUTF8StringEncoding freeWhenDone:NO];
-		return SubRendererCreateCF(isSSA, (__bridge CFStringRef _Nullable)(hdr), width, height);
-	}
-}
-
-SubRendererRef SubRendererCreateCF(bool isSSA, CFStringRef header, int width, int height)
-{
-	@autoreleasepool {
-		SubRendererRef s = nil;
-		@try {
-			s = (SubRendererRef)CFBridgingRetain([[SubCoreTextRenderer alloc] initWithScriptType:isSSA ? kSubTypeSSA : kSubTypeSRT header:(__bridge NSString * _Nonnull)(header) videoWidth:width videoHeight:height]);
-		}
-		@catch (NSException *e) {
-			NSLog(@"Caught exception while creating SubRenderer - %@", e);
-		}
-		return s;
-	}
-}
-#endif
 
 #include "TTStructs.h"
 

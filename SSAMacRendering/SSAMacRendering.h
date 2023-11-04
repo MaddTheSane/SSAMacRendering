@@ -21,6 +21,4 @@ FOUNDATION_EXPORT const unsigned char SSAMacRenderingVersionString[];
 #import <SSAMacRendering/SubRenderer.h>
 #include <SSAMacRendering/CommonUtils.h>
 
-
-#import <SSAMacRendering/SubATSUIRenderer.h>
 #import <SSAMacRendering/SubCoreTextRenderer.h>

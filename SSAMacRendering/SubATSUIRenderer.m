@@ -338,6 +338,7 @@ static void SetATSULayoutOther(ATSUTextLayout l, ATSUAttributeTag t, ByteCount s
 }
 
 @implementation SubATSUIRenderer
+@synthesize context;
 
 - (instancetype)initWithScriptType:(int)type header:(NSString*)header videoWidth:(CGFloat)width videoHeight:(CGFloat)height
 {
@@ -1482,54 +1483,6 @@ SubRendererRef SubRendererCreateCF(bool isSSA, CFStringRef header, int width, in
 	}
 }
 #endif
-
-void SubRendererRenderPacket(SubRendererRef s, CGContextRef c, CFStringRef str, int cWidth, int cHeight)
-{
-	@autoreleasepool {
-		@try {
-			[(__bridge id<SubRenderer>)s renderPacket:(__bridge NSString*)str inContext:c size:CGSizeMake(cWidth, cHeight)];
-		}
-		@catch (NSException *e) {
-			NSLog(@"Caught exception during rendering - %@", e);
-		}
-	}
-}
-
-void SubRendererPrerollFromHeader(char *header, int headerLen)
-{
-	SubRendererRef s = SubRendererCreate(header!=NULL, header, headerLen, 640, 480);
-	
-	/*
-	CGColorSpaceRef csp = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-	void *buf = malloc(640 * 480 * 4);
-	CGContextRef c = CGBitmapContextCreate(buf,640,480,8,640 * 4,csp,kCGImageAlphaPremultipliedFirst);
-	
-	if (!headerLen) {
-		SubRendererRenderPacket(s, c, (CFStringRef)@"Abcde .", 640, 480);
-	} else {
-		NSArray *styles = [s->context->styles allValues];
-		int i, nstyles = [styles count];
-		
-		for (i = 0; i < nstyles; i++) {
-			SubStyle *sty = [styles objectAtIndex:i];
-			NSString *line = [NSString stringWithFormat:@"0,0,%@,,0,0,0,,Abcde .", sty->name];
-			SubRendererRenderPacket(s, c, (CFStringRef)line, 640, 480);
-		}
-	}
-	
-	CGContextRelease(c);
-	free(buf);
-	CGColorSpaceRelease(csp);
-	*/
-	SubRendererDispose(s);
-}
-
-void SubRendererDispose(SubRendererRef s)
-{
-	@autoreleasepool {
-		CFBridgingRelease(s);
-	}
-}
 
 #include "TTStructs.h"
 

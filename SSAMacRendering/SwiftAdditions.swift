@@ -120,6 +120,8 @@ extension SubSSATagName: CustomStringConvertible {
 			return "tag_fad"
 		case .tag_fade:
 			return "tag_fade"
+		@unknown default:
+			return "Unknown tag_, value \(rawValue)"
 		}
 	}
 }

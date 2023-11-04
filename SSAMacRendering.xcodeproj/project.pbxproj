@@ -17,8 +17,7 @@
 		555762142AE9C66700120C89 /* SubHTMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555762132AE9C66700120C89 /* SubHTMLExporter.swift */; };
 		555762172AE9E67900120C89 /* SSAMacRendering.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 557C8ED41F33913E004D986C /* SSAMacRendering.framework */; };
 		557C8ED91F33913E004D986C /* SSAMacRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8ED71F33913E004D986C /* SSAMacRendering.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		557C8EF21F339151004D986C /* SubATSUIRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EE31F339151004D986C /* SubATSUIRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		557C8EF31F339151004D986C /* SubATSUIRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 557C8EE41F339151004D986C /* SubATSUIRenderer.m */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		557C8EF21F339151004D986C /* SubATSUIRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EE31F339151004D986C /* SubATSUIRenderer.h */; };
 		557C8EF41F339151004D986C /* SubContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EE51F339151004D986C /* SubContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		557C8EF51F339151004D986C /* SubContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 557C8EE61F339151004D986C /* SubContext.m */; };
 		557C8EF61F339151004D986C /* SubImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EE71F339151004D986C /* SubImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -54,6 +53,7 @@
 		55A344FA1F34E6F6002C823B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A344F91F34E6F6002C823B /* main.swift */; };
 		55C2CBE31F99348D005B4CF4 /* CTStringAttributesAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C2CBE21F99348D005B4CF4 /* CTStringAttributesAdditions.swift */; };
 		55D6BD1B1F99A3FF00277ACB /* CTFontDescriptorAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6BD1A1F99A3FF00277ACB /* CTFontDescriptorAdditions.swift */; };
+		55D8EEB62AF390100007CE79 /* SubRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 55D8EEB52AF390100007CE79 /* SubRenderer.m */; };
 		55EDFDE62036D82E00887AF5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 55EDFDE52036D82E00887AF5 /* main.m */; };
 		55EDFDF02036E09100887AF5 /* SSAMacRendering.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 557C8ED41F33913E004D986C /* SSAMacRendering.framework */; };
 		55EDFDF3203789C500887AF5 /* SSAMacRendering.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 557C8ED41F33913E004D986C /* SSAMacRendering.framework */; };
@@ -296,6 +296,7 @@
 		55A344F91F34E6F6002C823B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		55C2CBE21F99348D005B4CF4 /* CTStringAttributesAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTStringAttributesAdditions.swift; sourceTree = "<group>"; };
 		55D6BD1A1F99A3FF00277ACB /* CTFontDescriptorAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTFontDescriptorAdditions.swift; sourceTree = "<group>"; };
+		55D8EEB52AF390100007CE79 /* SubRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubRenderer.m; sourceTree = "<group>"; };
 		55EDFDE32036D82E00887AF5 /* ssa2png */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ssa2png; sourceTree = BUILT_PRODUCTS_DIR; };
 		55EDFDE52036D82E00887AF5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		55F9A51C1F9A816C0001D35F /* CTRunAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTRunAdditions.swift; sourceTree = "<group>"; };
@@ -448,6 +449,7 @@
 				557C8EE91F339151004D986C /* SubParsing.h */,
 				557C8EEA1F339151004D986C /* SubParsing.m.rl */,
 				557C8EEB1F339151004D986C /* SubRenderer.h */,
+				55D8EEB52AF390100007CE79 /* SubRenderer.m */,
 				557C8EEC1F339151004D986C /* SubUtilities.h */,
 				557C8EED1F339151004D986C /* SubUtilities.m */,
 				557C8ED71F33913E004D986C /* SSAMacRendering.h */,
@@ -748,7 +750,7 @@
 					};
 					557C8ED31F33913E004D986C = {
 						CreatedOnToolsVersion = 8.3.3;
-						LastSwiftMigration = "";
+						LastSwiftMigration = 1500;
 						ProvisioningStyle = Automatic;
 					};
 					557C8F241F33A557004D986C = {
@@ -888,8 +890,8 @@
 				557C8F201F339FE7004D986C /* SubParsing.m.rl in Sources */,
 				557C8EF51F339151004D986C /* SubContext.m in Sources */,
 				557C8EF71F339151004D986C /* SubImport.mm in Sources */,
+				55D8EEB62AF390100007CE79 /* SubRenderer.m in Sources */,
 				555762022AE9B67900120C89 /* SwiftAdditions.swift in Sources */,
-				557C8EF31F339151004D986C /* SubATSUIRenderer.m in Sources */,
 				557C8EFC1F339151004D986C /* SubUtilities.m in Sources */,
 				557C8F031F339525004D986C /* CommonUtils.c in Sources */,
 				557C8F001F33945F004D986C /* SubCoreTextRenderer.m in Sources */,
@@ -1194,6 +1196,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.maddthesane.SSAMacRendering;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1218,6 +1221,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.maddthesane.SSAMacRendering;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

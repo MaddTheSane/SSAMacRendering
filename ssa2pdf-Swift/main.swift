@@ -9,7 +9,6 @@
 import Foundation
 import CoreGraphics
 import SSAMacRendering
-import SSAMacRendering.SubATSUIRenderer
 import SSAMacRendering.SubContext
 import SSAMacRendering.SubCoreTextRenderer
 import SSAMacRendering.SubImport
