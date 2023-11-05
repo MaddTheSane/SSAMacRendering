@@ -50,7 +50,7 @@ typedef NS_ENUM(int, SubSSATagName) {
 -(void)didCompleteStyleParsing:(SubStyle*)s;
 
 @required
-@property (readonly, strong) SubContext *context;
+@property (readonly, strong, null_unspecified) SubContext *context;
 -(void)didCreateStartingSpan:(SubRenderSpan*)span forDiv:(SubRenderDiv*)div NS_SWIFT_NAME(didCreateStartingSpan(_:for:));
 
 -(void)spanChangedTag:(SubSSATagName)tag span:(SubRenderSpan*)span div:(SubRenderDiv*)div param:(void*)p NS_SWIFT_NAME(spanChanged(tag:span:div:param:));

@@ -24,7 +24,7 @@
 __BEGIN_DECLS
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(int, SubType) {
+typedef NS_ENUM(uint8_t, SubType) {
 	kSubTypeSSA,
 	kSubTypeASS,
 	kSubTypeSRT,
@@ -107,7 +107,7 @@ extern NSString * const kSubDefaultFontName;
 @property Float32 platformSizeScale;
 
 + (instancetype)defaultStyleWithDelegate:(id<SubRenderer>)delegate;
-- (instancetype)initWithDictionary:(NSDictionary<NSString*,id> *)ssaDict scriptVersion:(UInt8)version delegate:(id<SubRenderer>)renderer;
+- (instancetype)initWithDictionary:(NSDictionary<NSString*,id> *)ssaDict scriptVersion:(SubType)version delegate:(id<SubRenderer>)renderer;
 @end
 
 @interface SubContext : NSObject {

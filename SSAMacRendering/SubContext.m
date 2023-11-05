@@ -70,7 +70,7 @@ NSString * const kSubDefaultFontName = @"Helvetica";
 	return sty;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)s scriptVersion:(UInt8)version delegate:(id<SubRenderer>)delegate_
+- (instancetype)initWithDictionary:(NSDictionary *)s scriptVersion:(SubType)version delegate:(id<SubRenderer>)delegate_
 {
 	if (self = [super init]) {
 		NSString *tmp;

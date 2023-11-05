@@ -197,6 +197,34 @@ static NSString * const Scale;
 	return aFont;
 }
 
++ (BOOL)registerFontsAtURL:(NSURL*)url error:(NSError**)error
+{
+	CFErrorRef theError = NULL;
+	BOOL success = CTFontManagerRegisterFontsForURL((CFURLRef)url, kCTFontManagerScopeProcess, &theError);
+	if (theError) {
+		if (error) {
+			*error = CFBridgingRelease(theError);
+		} else {
+			CFRelease(theError);
+		}
+	}
+	return success;
+}
+
++ (BOOL)unregisterFontsAtURL:(NSURL*)url error:(NSError**)error
+{
+	CFErrorRef theError = NULL;
+	BOOL success = CTFontManagerUnregisterFontsForURL((CFURLRef)url, kCTFontManagerScopeProcess, &theError);
+	if (theError) {
+		if (error) {
+			*error = CFBridgingRelease(theError);
+		} else {
+			CFRelease(theError);
+		}
+	}
+	return success;
+}
+
 + (BOOL)unregisterFont:(CF_CONSUMED CGFontRef)font error:(NSError*_Nullable __autoreleasing*_Nullable)error
 {
 	CFErrorRef ourErr = NULL;

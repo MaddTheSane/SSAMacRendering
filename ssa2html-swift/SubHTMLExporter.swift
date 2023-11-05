@@ -17,6 +17,10 @@ struct StderrOutputStream: TextOutputStream {
 var errStream = StderrOutputStream()
 
 internal final class SubHTMLExporter: NSObject, SubRenderer {
+	var context: SubContext! {
+		return sc
+	}
+	
 	let aspectRatio: CGFloat = 4/3
 	
 	func render(packet: String, in c: CGContext, size: CGSize) {

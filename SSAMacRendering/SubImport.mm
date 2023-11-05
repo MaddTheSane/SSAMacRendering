@@ -713,7 +713,7 @@ CXXSubSerializer::~CXXSubSerializer()
 {
 	@autoreleasepool {
 		if (priv) {
-			CFBridgingRelease(priv);
+			CFRelease(priv);
 			priv = NULL;
 		}
 	}
