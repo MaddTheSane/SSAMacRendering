@@ -65,6 +65,8 @@ public extension NSBezierPath {
 }
 */
 
+let hi = CTFontManagerCreateFontDescriptorsFromURL(URL(fileURLWithPath: "/Users/cwbetts/Library/Fonts/PSDeluxe.suit") as NSURL) as? [CTFontDescriptor]
+print(hi!)
 if let fds = FontManager.fontDescriptors(from: URL(fileURLWithPath: "/Library/Fonts/PSDeluxe.suit")) {
 	fds.count
 	for fd in fds {

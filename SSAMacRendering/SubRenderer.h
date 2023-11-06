@@ -21,8 +21,6 @@
 
 #include <sys/cdefs.h>
 
-__BEGIN_DECLS
-
 #include <CoreFoundation/CoreFoundation.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <CoreGraphics/CoreGraphics.h>
@@ -30,6 +28,8 @@ __BEGIN_DECLS
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
+
+__BEGIN_DECLS
 
 CF_ASSUME_NONNULL_BEGIN
 
@@ -62,6 +62,7 @@ typedef NS_ENUM(int, SubSSATagName) {
 
 #else // !__OBJC__
 
+__BEGIN_DECLS
 CF_ASSUME_NONNULL_BEGIN
 
 #endif

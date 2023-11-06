@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "SubRenderer.h"
-#import "SubContext.h"
+#import <SSAMacRendering/SubRenderer.h>
+#import <SSAMacRendering/SubContext.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

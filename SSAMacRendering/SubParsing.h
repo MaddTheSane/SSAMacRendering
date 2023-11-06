@@ -20,7 +20,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
-#import "SubContext.h"
+#import <SSAMacRendering/SubContext.h>
 
 __BEGIN_DECLS
 NS_ASSUME_NONNULL_BEGIN
