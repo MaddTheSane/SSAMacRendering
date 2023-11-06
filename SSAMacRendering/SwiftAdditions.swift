@@ -27,34 +27,36 @@ public func parseSSAAlignment(_ b: UInt8) -> (h: SubAlignmentH, v: SubAlignmentV
 	return parseASSAlignment(a)
 }
 
-extension SubRGBAColor {
-	@inlinable public init(rgb: UInt32) {
+public extension SubRGBAColor {
+	@inlinable init(rgb: UInt32) {
 		self = SubParseSSAColor(rgb)
 	}
 	
-	@inlinable public init(string: String) {
+	@inlinable init(string: String) {
 		self = SubParseSSAColorString(string)
 	}
 	
-	public var cgColor: CGColor {
+	var cgColor: CGColor {
 		let cols = [CGFloat(self.red), CGFloat(self.green), CGFloat(self.blue), CGFloat(self.alpha)]
 		return CGColor(colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!, components: cols)!
 	}
 }
 
 public func parseSSAFile(_ ssa: String) -> (headers: [String: String], styles: [[String: String]], subs: [[String: String]])? {
-	var tmpHead = NSDictionary()
-	var tmpStyles = NSArray()
-	var tmpSubs = NSArray()
-	
-	__SubParseSSAFile(ssa, &tmpHead, &tmpStyles, &tmpSubs)
-	
-	guard let head = tmpHead as? [String: String], 
-			let styles = tmpStyles as? [[String: String]],
-		  let subs = tmpSubs as? [[String: String]] else {
-		return nil
+	return autoreleasepool {
+		var tmpHead = NSDictionary()
+		var tmpStyles = NSArray()
+		var tmpSubs = NSArray()
+		
+		__SubParseSSAFile(ssa, &tmpHead, &tmpStyles, &tmpSubs)
+		
+		guard let head = tmpHead as? [String: String],
+				let styles = tmpStyles as? [[String: String]],
+			  let subs = tmpSubs as? [[String: String]] else {
+			return nil
+		}
+		return (head, styles, subs)
 	}
-	return (head, styles, subs)
 }
 
 extension SubSSATagName: CustomStringConvertible {

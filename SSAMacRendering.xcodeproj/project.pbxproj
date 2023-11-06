@@ -769,7 +769,7 @@
 					};
 					55A344F61F34E6F6002C823B = {
 						CreatedOnToolsVersion = 8.3.3;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1500;
 						ProvisioningStyle = Automatic;
 					};
 					55EDFDE22036D82E00887AF5 = {
@@ -1401,6 +1401,7 @@
 			buildSettings = {
 				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -1409,6 +1410,7 @@
 			buildSettings = {
 				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

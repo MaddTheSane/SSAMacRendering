@@ -455,7 +455,6 @@ class SubCTRenderer: NSObject, SubRenderer {
 		spanEx.font = ourFont
 		style?.style[kCTFontAttributeName as String] = ourFont
 	}
-
 	
 	init?(scriptType type: SubType, header: String?, videoWidth width: CGFloat, videoHeight height: CGFloat) {
 		videoWidth = width
