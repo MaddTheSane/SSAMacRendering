@@ -200,7 +200,7 @@ BOOL IsScriptASS(NSDictionary *headers)
 	}
 }
 
--(SubContext*)initWithScriptType:(SubType)type headers:(NSDictionary *)headers_ styles:(NSArray *)stylesArray delegate:(id<SubRenderer>)delegate
+-(SubContext*)initWithScriptType:(SubType)type headers:(NSDictionary<NSString*,NSString*> *)headers_ styles:(NSArray<NSDictionary<NSString*,NSString*>*> *)stylesArray delegate:(id<SubRenderer>)delegate
 {
 	if (self = [super init]) {
 		resX = 640;
@@ -222,7 +222,7 @@ BOOL IsScriptASS(NSDictionary *headers)
 			NSInteger nstyles = [stylesArray count];
 			styles = [[NSMutableDictionary alloc] initWithCapacity:nstyles];
 			
-			for (NSDictionary *style in stylesArray) {
+			for (NSDictionary<NSString*,NSString*> *style in stylesArray) {
 				NSString *name = [style objectForKey:@"Name"];
 				SubStyle *sstyle = [[SubStyle alloc] initWithDictionary:style scriptVersion:scriptType delegate:delegate];
 				

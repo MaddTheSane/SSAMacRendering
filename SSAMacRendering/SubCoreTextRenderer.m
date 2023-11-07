@@ -197,6 +197,21 @@ static NSString * const Scale;
 	return aFont;
 }
 
++ (BOOL)unregisterFont:(CF_CONSUMED CGFontRef)font error:(NSError*_Nullable __autoreleasing*_Nullable)error
+{
+	CFErrorRef ourErr = NULL;
+
+	BOOL success = CTFontManagerUnregisterGraphicsFont(font, &ourErr);
+	if (!success) {
+		NSError *nsErr = CFBridgingRelease(ourErr);
+		if (error) {
+			*error = nsErr;
+		}
+	}
+	CGFontRelease(font);
+	return success;
+}
+
 + (BOOL)registerFontsAtURL:(NSURL*)url error:(NSError**)error
 {
 	CFErrorRef theError = NULL;
@@ -222,21 +237,6 @@ static NSString * const Scale;
 			CFRelease(theError);
 		}
 	}
-	return success;
-}
-
-+ (BOOL)unregisterFont:(CF_CONSUMED CGFontRef)font error:(NSError*_Nullable __autoreleasing*_Nullable)error
-{
-	CFErrorRef ourErr = NULL;
-
-	BOOL success = CTFontManagerUnregisterGraphicsFont(font, &ourErr);
-	if (!success) {
-		NSError *nsErr = CFBridgingRelease(ourErr);
-		if (error) {
-			*error = nsErr;
-		}
-	}
-	CGFontRelease(font);
 	return success;
 }
 

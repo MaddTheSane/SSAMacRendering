@@ -33,7 +33,7 @@
 
 #pragma mark C
 
-static NSString *MatroskaPacketizeLine(NSDictionary *sub, NSInteger n)
+static NSString *MatroskaPacketizeLine(NSDictionary<NSString*,NSString*> *sub, NSInteger n)
 {
 	NSString *name = [sub objectForKey:@"Name"];
 	if (!name) name = [sub objectForKey:@"Actor"];
@@ -73,15 +73,15 @@ static int ParseSubTime(const char *time, int secondScale, BOOL hasSign)
 
 static NSString *SubLoadSSAFromData(NSString *ssa, SubSerializer *ss)
 {
-	NSDictionary *headers;
-	NSArray *subs;
+	NSDictionary<NSString*,NSString*> *headers;
+	NSArray<NSDictionary<NSString*,NSString*>*> *subs;
 	
 	SubParseSSAFile(ssa, &headers, NULL, &subs);
 	
 	NSInteger numlines = [subs count];
 	
 	for (NSInteger i = 0; i < numlines; i++) {
-		NSDictionary *sub = [subs objectAtIndex:i];
+		NSDictionary<NSString*,NSString*> *sub = [subs objectAtIndex:i];
 		SubLine *sl = [[SubLine alloc] initWithLine:MatroskaPacketizeLine(sub, i)
 											  start:ParseSubTime([[sub objectForKey:@"Start"] UTF8String],100,NO)
 												end:ParseSubTime([[sub objectForKey:@"End"] UTF8String],100,NO)];

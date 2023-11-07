@@ -294,7 +294,7 @@ private func drawShape(_ c: CGContext, path: CGPath, div: SubRenderDiv, firstSpa
 	}
 }
 
-class SubCTRenderer: NSObject, SubRenderer {
+final class SubCTRenderer: NSObject, SubRenderer {
 	fileprivate enum TextLayer: Int {
 		case shadow = 0
 		case outline
@@ -306,7 +306,7 @@ class SubCTRenderer: NSObject, SubRenderer {
 	///
 	/// The returned `CGFont` object can be used by `CTFontManagerUnregisterGraphicsFont()` to deregister
 	/// the font from CoreText.
-	class func addFont(from data: Data) throws -> CGFont {
+	class func registerFont(from data: Data) throws -> CGFont {
 		guard let datPrivid = CGDataProvider(data: data as NSData),
 			  let aFont = CGFont(datPrivid) else {
 			throw NSError(domain: NSCocoaErrorDomain, code: NSFileReadCorruptFileError)
@@ -321,6 +321,43 @@ class SubCTRenderer: NSObject, SubRenderer {
 			}
 		}
 		return aFont
+	}
+	
+	class func unregister(font: CGFont) throws {
+		var maybeErr: Unmanaged<CFError>? = nil
+		let success = CTFontManagerUnregisterGraphicsFont(font, &maybeErr)
+		if !success {
+			if let maybeErr = maybeErr?.takeRetainedValue() {
+				throw maybeErr
+			} else {
+				throw NSError(domain: kCTFontManagerErrorDomain as String, code: CTFontManagerError.unsupportedScope.rawValue)
+			}
+		}
+	}
+	
+	static func registerFonts(at url: URL) throws {
+		var theError: Unmanaged<CFError>? = nil
+		let success = CTFontManagerRegisterFontsForURL(url as NSURL, .process, &theError);
+		guard success else {
+			if let theError = theError?.takeRetainedValue() {
+				throw theError
+			} else {
+				throw NSError(domain: kCTFontManagerErrorDomain as String, code: CTFontManagerError.unsupportedScope.rawValue, userInfo: [NSURLErrorKey: url])
+			}
+		}
+	}
+	
+	
+	static func unregisterFonts(at url: URL) throws {
+		var theError: Unmanaged<CFError>? = nil
+		let success = CTFontManagerUnregisterFontsForURL(url as NSURL, .process, &theError);
+		guard success else {
+			if let theError = theError?.takeRetainedValue() {
+				throw theError
+			} else {
+				throw NSError(domain: kCTFontManagerErrorDomain as String, code: CTFontManagerError.unsupportedScope.rawValue, userInfo: [NSURLErrorKey: url])
+			}
+		}
 	}
 	
 	fileprivate final class Style: NSObject, NSCopying {

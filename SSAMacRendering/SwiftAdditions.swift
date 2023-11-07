@@ -51,7 +51,7 @@ public func parseSSAFile(_ ssa: String) -> (headers: [String: String], styles: [
 		__SubParseSSAFile(ssa, &tmpHead, &tmpStyles, &tmpSubs)
 		
 		guard let head = tmpHead as? [String: String],
-				let styles = tmpStyles as? [[String: String]],
+			  let styles = tmpStyles as? [[String: String]],
 			  let subs = tmpSubs as? [[String: String]] else {
 			return nil
 		}

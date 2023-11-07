@@ -63,7 +63,7 @@ void SubRendererPrerollFromHeader(char *header, int headerLen)
 void SubRendererDispose(SubRendererRef s)
 {
 	@autoreleasepool {
-		CFBridgingRelease(s);
+		CFRelease(s);
 	}
 }
 
