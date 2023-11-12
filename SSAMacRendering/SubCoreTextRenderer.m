@@ -437,6 +437,7 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCore
 
 		 */
 	}
+	CGContextRestoreGState(c);
 }
 
 -(void)didCompleteHeaderParsing:(SubContext*)sc

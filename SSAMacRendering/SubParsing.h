@@ -104,7 +104,7 @@ extern SubRGBAColor SubParseSSAColorString(NSString *c);
 
 extern UInt8 SubASSFromSSAAlignment(UInt8 a);
 extern void  SubParseASSAlignment(UInt8 a, SubAlignmentH *alignH, SubAlignmentV *alignV) NS_REFINED_FOR_SWIFT;
-extern BOOL  SubParseFontVerticality(NSString *_Nonnull* _Nonnull fontname) NS_REFINED_FOR_SWIFT;
+extern BOOL  SubParseFontVerticality(NSString *_Nonnull __autoreleasing* _Nonnull fontname) NS_REFINED_FOR_SWIFT;
 	
 extern void  SubParseSSAFile(NSString *ssa, NSDictionary<NSString*,NSString*> *_Nonnull*_Nonnull headers, NSArray<NSDictionary<NSString*,NSString*>*> *_Nonnull*_Nullable styles, NSArray<NSDictionary<NSString*,NSString*>*> *_Nonnull*_Nullable subs) NS_REFINED_FOR_SWIFT;
 extern NSArray<SubRenderDiv*> *SubParsePacket(NSString *packet, SubContext *context, id<SubRenderer> _Nullable delegate);

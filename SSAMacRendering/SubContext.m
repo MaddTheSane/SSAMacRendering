@@ -46,7 +46,7 @@ NSString * const kSubDefaultFontName = @"Helvetica";
 	SubStyle *sty = [[SubStyle alloc] init];
 	
 	sty.name = @"Default";
-	sty->fontname = kSubDefaultFontName;
+	sty.fontname = kSubDefaultFontName;
 	sty->platformSizeScale = 1;
 	sty->size = 32 * sqrt([delegate aspectRatio] / (4./3.));
 	sty->primaryColor = (SubRGBAColor){1,1,1,1};
@@ -62,7 +62,7 @@ NSString * const kSubDefaultFontName = @"Helvetica";
 	sty->alignH = kSubAlignmentCenter;
 	sty->alignV = kSubAlignmentBottom;
 	sty->borderStyle = kSubBorderStyleNormal;
-	sty->delegate = delegate;
+	sty.delegate = delegate;
 	
 	if ([delegate respondsToSelector:@selector(didCompleteStyleParsing:)]) {
 		[delegate didCompleteStyleParsing:sty];
