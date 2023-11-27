@@ -256,7 +256,7 @@ static NSString * const Scale;
 		
 		context = [[SubContext alloc] initWithScriptType:type headers:headers styles:styles delegate:self];
 		srgbCSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-
+		drawTextBounds = CFPreferencesGetAppBooleanValue(CFSTR("DrawSubTextBounds"), PERIAN_PREF_DOMAIN, NULL);
 	}
 	return self;
 }
@@ -266,7 +266,7 @@ typedef NS_ENUM(int8_t, fill_or_stroke) {
 	strokec
 };
 
-static void SetColor(CGContextRef c, fill_or_stroke whichcolor, CGColorRef col)
+static inline void SetColor(CGContextRef c, fill_or_stroke whichcolor, CGColorRef col)
 {
 	if (whichcolor == fillc) CGContextSetFillColorWithColor(c, col);
 	else CGContextSetStrokeColorWithColor(c, col);
@@ -432,10 +432,39 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCore
 			continue;
 		}
 
+		NSRect marginRect = NSMakeRect(div->marginL, div->marginV, context->resX - div->marginL - div->marginR, context->resY - div->marginV - div->marginV);
+		
+		marginRect.origin.x *= screenScaleX;
+		marginRect.origin.y *= screenScaleY;
+		marginRect.size.width  *= screenScaleX;
+		marginRect.size.height *= screenScaleY;
+
 		/*
 		 guard let text = div.text, text.count != 0, div.spans!.count != 0 else {
 
 		 */
+		
+		SubRenderSpan *firstSpan = [div->spans objectAtIndex:0];
+		SubCoreTextSpanExtra *firstSpanEx = firstSpan.extra;
+
+		if (div->scale > 0) {
+			CGContextSaveGState(c);
+			//CGContextflip
+			CGAffineTransform trans = CGAffineTransformMakeTranslation(div->posX, div->posY);
+			CGFloat angle = firstSpanEx->angle;
+			angle *= M_PI / 180.;
+			trans = CGAffineTransformRotate(trans, angle);
+			CGAffineTransform trans2 = CGAffineTransformMake(1, 0, 0, -1, 0, videoHeight * screenScaleY);
+			CGContextConcatCTM(c, trans2);
+			//CGContextScaleCTM(c, 1, videoHeight * screenScaleY);
+			//CGContextTranslateCTM(c, div->posX, div->posY);
+			CGPathRef pr = CreateSubParseSubShapesWithString(div->text, &trans);
+			
+			drawShape(c, pr, div, firstSpanEx);
+
+			CGPathRelease(pr);
+			CGContextRestoreGState(c);
+		}
 	}
 	CGContextRestoreGState(c);
 }
@@ -667,7 +696,7 @@ typedef NS_OPTIONS(UInt8, RenderOptions) {
 			break;
 		case tag_p:
 			fv();
-			Codecprintf(NULL, "Unimplemented SSA tag 'p'\n");
+			div->scale = fval;
 			break;
 		case tag_frx:
 			fv();
@@ -748,4 +777,18 @@ CGFloat GetWinCTFontSizeScale(CTFontRef font)
 	}
 	
 	return (winSize && unitsPerEM) ? ((CGFloat)unitsPerEM / (CGFloat)winSize) : 1;
+}
+
+static void FindAllPossibleLineBreaks(NSString *line, uint8_t *breakOpportunities)
+{
+	CFLocaleRef locale = CFLocaleCopyCurrent();
+	CFStringTokenizerRef token = CFStringTokenizerCreate(kCFAllocatorDefault, (CFStringRef)line, CFRangeMake(0, 0), kCFStringTokenizerUnitLineBreak, locale);
+	CFRelease(locale);
+	
+	while (CFStringTokenizerAdvanceToNextToken(token) != kCFStringTokenizerTokenNone) {
+		CFRange tokenRange = CFStringTokenizerGetCurrentTokenRange(token);
+		bitfield_set(breakOpportunities, tokenRange.location);
+	}
+	
+	CFRelease(token);
 }

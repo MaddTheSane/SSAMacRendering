@@ -14,7 +14,7 @@ if CommandLine.arguments.count != 2 {
 }
 
 func makeHTML(from fileURL: URL) -> String {
-	autoreleasepool {
+	return autoreleasepool {
 		let ss = SubSerializer()
 		let htm = SubHTMLExporter()
 		

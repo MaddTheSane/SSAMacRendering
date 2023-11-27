@@ -303,7 +303,5 @@ private final class SubHTMLSpanExtra: NSObject, NSCopying {
 }
 
 private func htmlfilter<A: StringProtocol>(_ s: A) -> String {
-	var ms = String(s)
-	ms.replace("\n", with: "<br>\n")
-	return ms
+	return s.replacingOccurrences(of: "\n", with: "<br>\n")
 }

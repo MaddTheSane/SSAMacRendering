@@ -68,7 +68,7 @@ CF_ASSUME_NONNULL_BEGIN
 #endif
 
 //This is actually an Obj-C class conforming to the SubRenderer protocol
-typedef struct CF_BRIDGED_TYPE(id) __SubRendererPtr *SubRendererRef CF_SWIFT_UNAVAILABLE("Just use the Obj-C classes instead.");
+typedef struct CF_BRIDGED_TYPE(id) __SubRendererPtr *SubRendererRef CF_SWIFT_NAME(SubRendererRef);
 
 // these are actually implemented in SubATSUIRenderer.m
 extern SubRendererRef __nullable SubRendererCreate(bool isSSA,  char * _Nullable header, size_t headerLen, int width, int height) CF_RETURNS_RETAINED;

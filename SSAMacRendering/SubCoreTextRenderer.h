@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Registers fonts that are in the specified file for the current process scope.
  *
  * @discussion This is equivalent to <code>CTFontManagerRegisterFontsForURL((CFURLRef)url, kCTFontManagerScopeProcess, error)</code>.
- * If you want to register fonts for a different scope, use <code>CTFontManagerUnregisterFontsForURL</code> directly.
+ * If you want to register fonts for a different scope, use <code>CTFontManagerRegisterFontsForURL</code> directly.
  */
 + (BOOL)registerFontsAtURL:(NSURL*)url error:(NSError**)error;
 
