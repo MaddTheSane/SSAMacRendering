@@ -368,6 +368,13 @@ static void drawShapePart(CGContextRef c, CGPathRef path, SubRenderDiv *div, Sub
 	}
 }
 
+typedef struct {
+	UniCharArrayOffset *breaks;
+	ItemCount breakCount;
+	NSInteger lStart, lEnd;
+	SInt8 direction;
+} BreakContext;
+
 static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCoreTextSpanExtra *firstSpanEx)
 {
 	BOOL drawShadow, drawOutline, clearOutlineInnerStroke;
@@ -414,6 +421,7 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCore
 
 - (void)renderPacket:(NSString *)packet inContext:(CGContextRef)c size:(CGSize)size
 {
+	CGFloat bottomPen = 0, topPen = 0, centerPen = 0, *storePen=NULL;
 	NSArray<SubRenderDiv*>* divs = SubParsePacket(packet, context, self);
 	int32_t lastLayer = 0;
 
@@ -432,17 +440,108 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCore
 			continue;
 		}
 
+		BOOL resetPens = NO, resetGState = NO;
+		NSData *ubufferData;
+		const unichar *ubuffer = SubUnicodeForString(div->text, &ubufferData);
+		
+		if (div->layer != lastLayer || div->shouldResetPens) {
+			resetPens = YES;
+			lastLayer = div->layer;
+		}
+
 		NSRect marginRect = NSMakeRect(div->marginL, div->marginV, context->resX - div->marginL - div->marginR, context->resY - div->marginV - div->marginV);
 		
 		marginRect.origin.x *= screenScaleX;
 		marginRect.origin.y *= screenScaleY;
 		marginRect.size.width  *= screenScaleX;
 		marginRect.size.height *= screenScaleY;
+		
+		CGFloat penY = 0, penX = 0, breakingWidth = marginRect.size.width;
+		BreakContext breakc = {0}; ItemCount breakCount;
+		
+//		ATSUSetTextPointerLocation(layout, ubuffer, kATSUFromTextBeginning, kATSUToTextEnd, textLen);
+//		ATSUSetTransientFontMatching(layout,TRUE);
+		
+//		SetLayoutPositioning(layout, breakingWidth, div->alignH);
+//		SetStyleSpanRuns(layout, div, ubuffer);
+		
+//		breakBuffer = FindLineBreaks(layout, div, breakLocator, breakBuffer, &breakCount, breakingWidth, ubuffer, textLen);
 
-		/*
-		 guard let text = div.text, text.count != 0, div.spans!.count != 0 else {
+		CGFloat imageWidth = 0, imageHeight = 0, descent = 0;
+//		UniCharArrayOffset *breaks = breakBuffer;
+		
+		if (div->positioned || div->alignV == kSubAlignmentMiddle) {
+//			GetTypographicRectangleForLayout(layout, breaks, breakCount, FloatToFixed(div->styleLine->outlineRadius), NULL, NULL, &imageHeight, &imageWidth);
+		}
+		
+		if (div->positioned || div->alignV != kSubAlignmentTop) {
+//			ATSUGetLineControl(layout, kATSUFromTextBeginning, kATSULineDescentTag, sizeof(ATSUTextMeasurement), &descent, NULL);
+		}
+		
+#if 0
+		{
+			ATSUTextMeasurement ascent, descent;
+			
+			ATSUGetLineControl(layout, kATSUFromTextBeginning, kATSULineAscentTag,  sizeof(ATSUTextMeasurement), &ascent,  NULL);
+			ATSUGetLineControl(layout, kATSUFromTextBeginning, kATSULineDescentTag, sizeof(ATSUTextMeasurement), &descent, NULL);
+			
+			NSLog(@"\"%@\" descent %f ascent %f\n", div->text, FixedToFloat(descent), FixedToFloat(ascent));
+		}
+#endif
+		
+		if (!div->positioned) {
+			penX = FloatToFixed(NSMinX(marginRect));
 
-		 */
+			switch(div->alignV) {
+				case kSubAlignmentBottom: default:
+					if (!bottomPen || resetPens) {
+						penY = NSMinY(marginRect) + descent;
+					} else {
+						penY = bottomPen;
+					}
+					
+					storePen = &bottomPen; breakc.lStart = breakCount; breakc.lEnd = -1; breakc.direction = 1;
+					break;
+				case kSubAlignmentMiddle:
+					if (!centerPen || resetPens) {
+						penY = NSMidY(marginRect) - (imageHeight / 2) + descent;
+					} else {
+						penY = centerPen;
+					}
+					
+					storePen = &centerPen; breakc.lStart = breakCount; breakc.lEnd = -1; breakc.direction = 1;
+					break;
+				case kSubAlignmentTop:
+					if (!topPen || resetPens) {
+//						penY = NSMaxY(marginRect) - GetLineHeight(layout, kATSUFromTextBeginning, NO);
+					} else {
+						penY = topPen;
+					}
+					
+					storePen = &topPen; breakc.lStart = 0; breakc.lEnd = breakCount+1; breakc.direction = -1;
+					break;
+			}
+		} else {
+			penX = div->posX * screenScaleX;
+			penY = (context->resY - div->posY) * screenScaleY;
+			
+			switch (div->alignH) {
+				case kSubAlignmentCenter: penX -= imageWidth / 2; break;
+				case kSubAlignmentRight: penX -= imageWidth; break;
+				case kSubAlignmentLeft: break;
+			}
+			
+			switch (div->alignV) {
+				case kSubAlignmentMiddle: penY -= imageHeight / 2; break;
+				case kSubAlignmentTop: penY -= imageHeight; break;
+				case kSubAlignmentBottom: break;
+			}
+			
+			penY += descent;
+
+//			SetLayoutPositioning(layout, imageWidth, div->alignH);
+			storePen = NULL; breakc.lStart = breakCount; breakc.lEnd = -1; breakc.direction = 1;
+		}
 		
 		SubRenderSpan *firstSpan = [div->spans objectAtIndex:0];
 		SubCoreTextSpanExtra *firstSpanEx = firstSpan.extra;
@@ -464,7 +563,37 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCore
 
 			CGPathRelease(pr);
 			CGContextRestoreGState(c);
+		} else {
+			// FIXME: we can only rotate an entire line at once
+			if (firstSpanEx->angle) {
+				CGFloat fangle = firstSpanEx->angle;
+//				SetATSULayoutOther(layout, kATSULineRotationTag, sizeof(Fixed), &fangle);
+				
+				// FIXME: awful hack for SSA vertical text idiom
+				// instead it needs to rotate text by hand or actually fix ATSUI's rotation origin
+				if (firstSpanEx->vertical &&
+					div->alignV == kSubAlignmentMiddle && div->alignH == kSubAlignmentCenter) {
+					CGContextSaveGState(c);
+					CGContextTranslateCTM(c, FixedToFloat(imageWidth)/2, FixedToFloat(imageWidth)/2);
+					resetGState = YES;
+				}
+			}
 		}
+		
+			if (drawTextBounds) {
+//			VisualizeLayoutLineHeights(c, layout, breaks, breakCount, FloatToFixed(div->styleLine->outlineRadius), penX, penY, size.height);
+
+		breakc.breakCount = breakCount;
+//		breakc.breaks = breaks;
+		
+//		penY = DrawOneTextDiv(c, layout, div, breakc, penX, penY);
+		}
+		if (resetGState)
+			CGContextRestoreGState(c);
+		
+		ubufferData = nil;
+		if (storePen) *storePen = penY;
+
 	}
 	CGContextRestoreGState(c);
 }
