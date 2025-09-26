@@ -24,6 +24,7 @@
 #import "SubImport.h"
 #import "SubParsing.h"
 #import "SubRenderer.h"
+#import "SubParsing.h"
 
 @interface SubHTMLExporter : NSObject <SubRenderer>
 {
@@ -57,6 +58,7 @@
 
 @implementation SubHTMLExporter
 @synthesize html;
+@synthesize context=sc;
 - (CGFloat)aspectRatio {
 	return 4.0/3.0;
 }
