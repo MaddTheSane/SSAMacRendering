@@ -184,21 +184,40 @@ static CGColorRef CreateCGColorFromRGBOpaque(SubRGBAColor c, CGColorSpaceRef csp
 #define bitfield_set(name, bit) name[(bit) / 8] |= 1 << ((bit) % 8);
 #define bitfield_test(name, bit) ((name[(bit) / 8] & (1 << ((bit) % 8))) != 0)
 
+/// Lightweight Objective-C wrapper around an `ATSUStyle` that supports copying.
+/// Used to store parsed style attributes and duplicate them for per-span rendering.
 @interface SubATSUStyle : NSObject <NSCopying> {
 @public;
+	/// The underlying ATSUI style object owned by this wrapper.
 	ATSUStyle style;
 }
+/// Creates a wrapper for an existing ATSUI style.
+/// - Parameter _style: The `ATSUStyle` to wrap. Ownership remains consistent with ATSUI usage in this renderer;
+///   the style is disposed when this wrapper is deallocated.
 - (instancetype)initWithATSUStyle:(ATSUStyle)_style;
 @end
 
+/// Per-span rendering state derived from a `SubStyle` and modified by override tags.
+/// Holds ATSUI style, resolved colors, transforms, and font metrics needed during layout and drawing.
 @interface SubATSUISpanExtra : NSObject <NSCopying> {
 	@public;
+	/// Copied ATSUI style used for this span's text run.
 	SubATSUStyle *style;
+	/// Primary/fill, outline/stroke, and shadow colors in the renderer's color space.
 	CGColorRef primaryColor, outlineColor, shadowColor;
+	/// Outline thickness, shadow offset distance, horizontal/vertical scale factors,
+	/// alpha multipliers, rotation angle (degrees), platform font-size scale, and font size.
 	Float32 outlineRadius, shadowDist, scaleX, scaleY, primaryAlpha, outlineAlpha, angle, platformSizeScale, fontSize;
+	/// Whether edge blur is requested (not fully implemented) and whether vertical text layout is enabled.
 	BOOL blurEdges, vertical;
+	/// Resolved ATSUI font identifier for the span.
 	ATSUFontID font;
 }
+/// Initializes per-span rendering state from a parsed subtitle style.
+/// - Parameters:
+///   - sstyle: The source `SubStyle` containing colors, font, geometry, and an ATSUI style extra.
+///   - cs: The `CGColorSpaceRef` used to create CGColors (typically sRGB).
+/// - Returns: An initialized span-extra object, or `nil` if initialization fails.
 -(instancetype)initWithStyle:(SubStyle*)sstyle colorSpace:(CGColorSpaceRef)cs;
 @end
 
@@ -211,6 +230,9 @@ static CGColorRef CreateCGColorFromRGBOpaque(SubRGBAColor c, CGColorSpaceRef csp
 	return self;
 }
 
+/// Creates a copy of this style wrapper with a duplicated ATSUI style.
+/// - Parameter zone: The zone in which to allocate the copy (ignored; uses default allocation).
+/// - Returns: A new `SubATSUStyle` containing a copy of the underlying `ATSUStyle`.
 - (id)copyWithZone:(NSZone*)zone
 {
 	SubATSUStyle *sty = [SubATSUStyle new];
@@ -225,6 +247,11 @@ static CGColorRef CreateCGColorFromRGBOpaque(SubRGBAColor c, CGColorSpaceRef csp
 @end
 
 @implementation SubATSUISpanExtra
+/// Creates a CGColor from an RGBA subtitle color.
+/// - Parameters:
+///   - c: The source RGBA color.
+///   - cspace: The destination color space.
+/// - Returns: A retained `CGColorRef`. The caller is responsible for releasing it.
 static CGColorRef CreateCGColorFromRGBA(SubRGBAColor c, CGColorSpaceRef cspace)
 {
 	const CGFloat components[] = {c.red, c.green, c.blue, c.alpha};
@@ -232,6 +259,11 @@ static CGColorRef CreateCGColorFromRGBA(SubRGBAColor c, CGColorSpaceRef cspace)
 	return CGColorCreate(cspace, components);
 }
 
+/// Creates an opaque CGColor from an RGBA subtitle color (alpha forced to 1).
+/// - Parameters:
+///   - c: The source RGBA color.
+///   - cspace: The destination color space.
+/// - Returns: A retained `CGColorRef`. The caller is responsible for releasing it.
 static CGColorRef CreateCGColorFromRGBOpaque(SubRGBAColor c, CGColorSpaceRef cspace)
 {
 	SubRGBAColor c2 = c;
@@ -239,6 +271,11 @@ static CGColorRef CreateCGColorFromRGBOpaque(SubRGBAColor c, CGColorSpaceRef csp
 	return CreateCGColorFromRGBA(c2, cspace);
 }
 
+/// Copies a CGColor with a new alpha value, consuming the original reference.
+/// - Parameters:
+///   - c: The original color to replace. This reference is released.
+///   - alpha: The alpha value for the new color.
+/// - Returns: A retained `CGColorRef` with the specified alpha.
 static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha)
 {
 	CGColorRef new = CGColorCreateCopyWithAlpha(c, alpha);
@@ -271,6 +308,9 @@ static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha)
 	return self;
 }
 
+/// Creates a deep-ish copy of this span-extra, copying the ATSUI style and retaining CGColors.
+/// - Parameter zone: The zone in which to allocate the copy (ignored).
+/// - Returns: A new `SubATSUISpanExtra` with copied/retained state.
 -(id)copyWithZone:(NSZone*)zone
 {
 	SubATSUISpanExtra *ret = [[SubATSUISpanExtra alloc] init];
@@ -295,6 +335,7 @@ static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha)
 	return ret;
 }
 
+/// Returns a short debug description of the span's alpha values.
 -(NSString*)description
 {
 	return [NSString stringWithFormat:@"SpanEx with alpha %f/%f", primaryAlpha, outlineAlpha];
@@ -308,8 +349,14 @@ static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha)
 }
 @end
 
+/// Convenience accessor for a render span's ATSUI-specific extra data.
 #define span_ex(span) ((SubATSUISpanEx*)span->ex)
 
+/// Sets a boolean ATSUI style attribute.
+/// - Parameters:
+///   - style: The ATSUI style to modify.
+///   - t: The attribute tag.
+///   - v: The boolean value to set.
 static void SetATSUStyleFlag(ATSUStyle style, ATSUAttributeTag t, Boolean v)
 {
 	const ATSUAttributeTag tags[] = {t};
@@ -319,6 +366,12 @@ static void SetATSUStyleFlag(ATSUStyle style, ATSUAttributeTag t, Boolean v)
 	ATSUSetAttributes(style,1,tags,sizes,vals);
 }
 
+/// Sets a non-boolean ATSUI style attribute.
+/// - Parameters:
+///   - style: The ATSUI style to modify.
+///   - t: The attribute tag.
+///   - s: The size of the value in bytes.
+///   - v: A pointer to the attribute value.
 static void SetATSUStyleOther(ATSUStyle style, ATSUAttributeTag t, ByteCount s, const ATSUAttributeValuePtr v)
 {
 	const ATSUAttributeTag tags[] = {t};
@@ -328,6 +381,12 @@ static void SetATSUStyleOther(ATSUStyle style, ATSUAttributeTag t, ByteCount s, 
 	ATSUSetAttributes(style,1,tags,sizes,vals);
 }
 
+/// Sets an ATSUI layout control attribute.
+/// - Parameters:
+///   - l: The ATSUI text layout to modify.
+///   - t: The attribute tag.
+///   - s: The size of the value in bytes.
+///   - v: A pointer to the attribute value.
 static void SetATSULayoutOther(ATSUTextLayout l, ATSUAttributeTag t, ByteCount s, const ATSUAttributeValuePtr v)
 {
 	const ATSUAttributeTag tags[] = {t};
@@ -337,9 +396,17 @@ static void SetATSULayoutOther(ATSUTextLayout l, ATSUAttributeTag t, ByteCount s
 	ATSUSetLayoutControls(l,1,tags,sizes,vals);
 }
 
+/// ATSUI-based subtitle renderer that parses SSA/ASS/SRT data via `SubContext` and draws packets into a Core Graphics context.
 @implementation SubATSUIRenderer
 @synthesize context;
 
+/// Initializes an ATSUI subtitle renderer for a video frame size.
+/// - Parameters:
+///   - type: The subtitle script type (e.g., SSA or SRT).
+///   - header: An optional subtitle header to parse for styles and script metadata.
+///   - width: The target video width in pixels.
+///   - height: The target video height in pixels.
+/// - Returns: An initialized renderer, or `nil` if initialization fails.
 - (instancetype)initWithScriptType:(int)type header:(NSString*)header videoWidth:(CGFloat)width videoHeight:(CGFloat)height
 {
 	if (self = [super init]) {
@@ -366,12 +433,16 @@ static void SetATSULayoutOther(ATSUTextLayout l, ATSUAttributeTag t, ByteCount s
 	return self;
 }
 
+/// SubContext delegate callback invoked after header parsing completes.
+/// Updates screen scaling factors based on the script resolution.
+/// - Parameter sc: The parsing context.
 -(void)didCompleteHeaderParsing:(SubContext*)sc
 {
 	screenScaleX = videoWidth / sc->resX;
 	screenScaleY = videoHeight / sc->resY;
 }
 
+/// The aspect ratio of the target video surface.
 -(CGFloat)aspectRatio
 {
 	return videoWidth / videoHeight;
@@ -381,6 +452,10 @@ static NSMutableDictionary *fontIDCache = nil;
 static ItemCount fontCount;
 static ATSUFontID *fontIDs = NULL;
 
+/// Resolves an SSA font family name to an ATSUI font ID.
+/// Results are cached; the lookup tries direct ATSU matching, ATS matching, and a case-insensitive scan.
+/// - Parameter name: The font family name from SSA/ASS.
+/// - Returns: A usable `ATSUFontID`, falling back to the default subtitle font when needed.
 /// Assumes ATSUFontID = ATSFontRef. This is true.
 static ATSUFontID GetFontIDForSSAName(NSString *name)
 {	
@@ -448,6 +523,9 @@ static ATSUFontID GetFontIDForSSAName(NSString *name)
 	}
 }
 
+/// SubContext delegate callback invoked after a style is parsed.
+/// Builds and attaches an ATSUI style wrapper to the `SubStyle`.
+/// - Parameter s: The parsed subtitle style to finalize for ATSUI rendering.
 -(void)didCompleteStyleParsing:(SubStyle*)s
 {
 	const ATSUAttributeTag tags[] = {kATSUStyleRenderingOptionsTag, kATSUSizeTag, kATSUQDBoldfaceTag, kATSUQDItalicTag, kATSUQDUnderlineTag, kATSUStyleStrikeThroughTag, kATSUFontTag};
@@ -483,11 +561,20 @@ static ATSUFontID GetFontIDForSSAName(NSString *name)
 	s.extra = [[SubATSUStyle alloc] initWithATSUStyle:style];
 }
 
+/// SubContext delegate callback invoked when a new render span starts.
+/// Creates the ATSUI span-extra state from the division's style.
+/// - Parameters:
+///   - span: The render span being created.
+///   - div: The render division that owns the span.
 -(void)didCreateStartingSpan:(SubRenderSpan *)span forDiv:(SubRenderDiv *)div
 {
 	span.extra = [[SubATSUISpanExtra alloc] initWithStyle:div->styleLine colorSpace:srgbCSpace];
 }
 
+/// Updates an ATSUI span's font and size attributes after font or size changes.
+/// - Parameters:
+///   - spanEx: The span-extra whose ATSUI style should be updated.
+///   - screenScale: The vertical screen scale factor applied to the font size.
 static void UpdateFontNameSize(SubATSUISpanExtra *spanEx, float screenScale)
 {
 	Fixed fSize = FloatToFixed(spanEx->fontSize * spanEx->platformSizeScale * screenScale);
@@ -496,10 +583,18 @@ static void UpdateFontNameSize(SubATSUISpanExtra *spanEx, float screenScale)
 	SetATSUStyleOther(style, kATSUSizeTag, sizeof(Fixed), &fSize);
 }
 
+/// Flags describing rendering complexity introduced by mid-line style changes.
 enum {renderMultipleParts = 1, // call ATSUDrawText more than once, needed for color/border changes in the middle of lines
 	  renderManualShadows = 2, // CG shadows can't change inside a line... probably
 	  renderComplexTransforms = 4}; // can't draw text at all, have to transform each vertex. needed for 3D perspective, or \frz in the middle of a line
 
+/// SubContext delegate callback invoked when an SSA override tag changes span rendering state.
+/// Updates ATSUI attributes and/or span-extra properties, and marks render complexity as needed.
+/// - Parameters:
+///   - tag: The SSA tag that changed.
+///   - span: The span being modified.
+///   - div: The division containing the span.
+///   - p: A pointer to the tag parameter value (type depends on `tag`).
 -(void)spanChangedTag:(SubSSATagName)tag span:(SubRenderSpan*)span div:(SubRenderDiv*)div param:(void*)p
 {
 	SubATSUISpanExtra *spanEx = span.extra;
@@ -671,7 +766,12 @@ enum {renderMultipleParts = 1, // call ATSUDrawText more than once, needed for c
 
 #pragma mark Rendering Helper Functions
 
-/// see comment for GetTypographicRectangleForLayout
+/// Returns the ATSUI line height (ascent plus optional descent) for a line starting at the given offset.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - lpos: The line start offset.
+///   - includeDescent: Whether to include the line descent.
+/// - Returns: The computed line height as an `ATSUTextMeasurement`.
 static ATSUTextMeasurement GetLineHeight(ATSUTextLayout layout, UniCharArrayOffset lpos, Boolean includeDescent)
 {
 	ATSUTextMeasurement ascent = 0, descent = 0;
@@ -682,6 +782,10 @@ static ATSUTextMeasurement GetLineHeight(ATSUTextLayout layout, UniCharArrayOffs
 	return ascent + descent;
 }
 
+/// Expands a rectangle uniformly by a radius on all sides.
+/// - Parameters:
+///   - rect: The rectangle to modify.
+///   - radius: The expansion amount.
 static void ExpandCGRect(CGRect *rect, CGFloat radius)
 {
 	rect->origin.x -= radius;
@@ -690,8 +794,17 @@ static void ExpandCGRect(CGRect *rect, CGFloat radius)
 	rect->size.width += radius*2.;
 }
 
-/// some broken fonts have very wrong typographic values set, and so this occasionally gives nonsense
-/// it should be checked against the real pixel box (see #if 0 below), but for correct fonts it looks much better
+/// Computes the typographic bounding rectangle for a laid-out text block.
+/// Some fonts report incorrect typographic metrics, so results may differ from pixel bounds.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - breaks: Soft/hard line break offsets, including start/end sentinels.
+///   - breakCount: The number of internal breaks.
+///   - extraHeight: Additional per-line height (e.g., outline radius).
+///   - lX: On return, the left edge in Fixed coordinates, if non-NULL.
+///   - lY: On return, the bottom edge in Fixed coordinates, if non-NULL.
+///   - height: On return, the total height.
+///   - width: On return, the total width.
 static void GetTypographicRectangleForLayout(ATSUTextLayout layout, UniCharArrayOffset *breaks, ItemCount breakCount, Fixed extraHeight, Fixed *lX, Fixed *lY, Fixed *height, Fixed *width)
 {
 	ATSTrapezoid trap = {0};
@@ -727,8 +840,16 @@ static void GetTypographicRectangleForLayout(ATSUTextLayout layout, UniCharArray
 	*width = largeRect.right - largeRect.left;
 }
 
-/// Draw the text bounds on screen under the actual text
-/// Note that it almost never appears where it's supposed to be, and I'm not sure if that's my fault or ATSUI's
+/// Debug helper that draws typographic and image bounds for each laid-out line.
+/// - Parameters:
+///   - c: The Core Graphics context to draw into.
+///   - layout: The ATSUI text layout.
+///   - breaks: Line break offsets including sentinels.
+///   - breakCount: The number of internal breaks.
+///   - extraHeight: Additional per-line height.
+///   - penX: The starting pen X position in Fixed coordinates.
+///   - penY: The starting pen Y position in Fixed coordinates.
+///   - screenHeight: The screen height (unused by the current implementation).
 static void VisualizeLayoutLineHeights(CGContextRef c, ATSUTextLayout layout, UniCharArrayOffset *breaks, ItemCount breakCount, Fixed extraHeight, Fixed penX, Fixed penY, float screenHeight)
 {
 	ATSTrapezoid trap = {0};
@@ -790,14 +911,25 @@ static void GetImageBoundingBoxForLayout(ATSUTextLayout layout, UniCharArrayOffs
 }
 #endif
 
+/// Indicates whether a Core Graphics color should be applied as fill or stroke.
 typedef enum {fillc, strokec} fill_or_stroke;
 
+/// Sets a Core Graphics fill or stroke color.
+/// - Parameters:
+///   - c: The graphics context.
+///   - whichcolor: Whether to set the fill or stroke color.
+///   - col: The color to apply.
 static void SetColor(CGContextRef c, fill_or_stroke whichcolor, CGColorRef col)
 {
 	if (whichcolor == fillc) CGContextSetFillColorWithColor(c, col);
 	else CGContextSetStrokeColorWithColor(c, col);
 }
 
+/// Applies a strongly-vertical character attribute to a run in the ATSUI layout.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - spanOffset: The run start offset.
+///   - length: The run length.
 static void MakeRunVertical(ATSUTextLayout layout, UniCharArrayOffset spanOffset, UniCharArrayOffset length)
 {
 	ATSUStyle style, vStyle;
@@ -810,6 +942,13 @@ static void MakeRunVertical(ATSUTextLayout layout, UniCharArrayOffset spanOffset
 	ATSUDisposeStyle(vStyle);
 }
 
+/// Enables vertical character treatment for characters in a span that fall above the tategaki threshold.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - div: The render division (unused, kept for call-site context).
+///   - ubuffer: The UTF-16 text buffer.
+///   - spanOffset: The span start offset.
+///   - length: The span length.
 static void EnableVerticalForSpan(ATSUTextLayout layout, SubRenderDiv *div, const unichar *ubuffer, UniCharArrayOffset spanOffset, UniCharArrayOffset length)
 {
 	const unichar tategakiLowerBound = 0x02F1; // copied from http://source.winehq.org/source/dlls/gdi32/freetype.c
@@ -835,6 +974,12 @@ static void EnableVerticalForSpan(ATSUTextLayout layout, SubRenderDiv *div, cons
 		MakeRunVertical(layout, runStart, i - runStart);
 }
 
+/// Applies each render span's ATSUI style to the corresponding run in the layout.
+/// Also enables vertical character handling for spans marked as vertical.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - div: The render division containing spans.
+///   - ubuffer: The UTF-16 text buffer.
 static void SetStyleSpanRuns(ATSUTextLayout layout, SubRenderDiv *div, const unichar *ubuffer)
 {
 	NSInteger span_count = [div->spans count];
@@ -854,6 +999,11 @@ static void SetStyleSpanRuns(ATSUTextLayout layout, SubRenderDiv *div, const uni
 	}
 }
 
+/// Configures ATSUI layout positioning controls (flush factor, line width, rotation).
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - lineWidth: The layout line width.
+///   - align: The horizontal alignment.
 static void SetLayoutPositioning(ATSUTextLayout layout, Fixed lineWidth, SubAlignmentH align)
 {
 	const ATSUAttributeTag tags[] = {kATSULineFlushFactorTag, kATSULineWidthTag, kATSULineRotationTag};
@@ -877,6 +1027,19 @@ static void SetLayoutPositioning(ATSUTextLayout layout, Fixed lineWidth, SubAlig
 	ATSUSetLayoutControls(layout,sizeof(vals) / sizeof(ATSUAttributeValuePtr),tags,sizes,vals);
 }
 
+/// Attempts to insert soft line breaks within a single hard-broken span to approach an ideal width.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - div: The render division (wrap style affects break selection).
+///   - breakOpportunities: Bitfield of allowed break positions.
+///   - records: ATS layout records for the span.
+///   - lineLen: The number of layout records.
+///   - idealLineWidth: The target line width.
+///   - originalLineWidth: The measured width of the original line.
+///   - maximumLineWidth: The maximum allowed line width.
+///   - numBreaks: The number of breaks to insert.
+///   - lastHardBreak: The character offset of the preceding hard break.
+/// - Returns: The offset of the last inserted break, or 0 if breaking could not be completed safely.
 static UniCharArrayOffset BreakOneLineSpan(ATSUTextLayout layout, SubRenderDiv *div, uint8_t *breakOpportunities,
 										   ATSLayoutRecord *records, ItemCount lineLen, Fixed idealLineWidth, Fixed originalLineWidth, Fixed maximumLineWidth, NSInteger numBreaks, NSInteger lastHardBreak)
 {		
@@ -930,6 +1093,15 @@ static UniCharArrayOffset BreakOneLineSpan(ATSUTextLayout layout, SubRenderDiv *
 	return (numBreaks == 0) ? 0 : lastBreakOffset;
 }
 
+/// Reflows lines to distribute width more evenly for SSA wrap styles that require it.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - div: The render division.
+///   - breakLocator: A text break locator for finding break opportunities.
+///   - breakingWidth: The maximum line width.
+///   - utext: The UTF-16 text buffer.
+///   - textLen: The length of the text buffer.
+///   - numHardBreaks: The number of existing hard/soft breaks to consider.
 static void BreakLinesEvenly(ATSUTextLayout layout, SubRenderDiv *div, TextBreakLocatorRef breakLocator, Fixed breakingWidth, const unichar *utext, NSInteger textLen, ItemCount numHardBreaks)
 {
 	UniCharArrayOffset hardBreaks[numHardBreaks+2];
@@ -973,6 +1145,17 @@ err:
 	Codecprintf(NULL, "ATSU error %d accessing text layout\n", (int)err);
 }
 
+/// Computes soft line breaks for a division according to its wrap style.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - div: The render division.
+///   - breakLocator: A text break locator used for "smart" wrapping.
+///   - breaks: An existing break buffer to reuse/reallocate.
+///   - nbreaks: On return, the number of internal breaks.
+///   - breakingWidth: The maximum line width.
+///   - utext: The UTF-16 text buffer.
+///   - textLen: The length of the text buffer.
+/// - Returns: A pointer to the break buffer (possibly reallocated). The buffer includes start/end sentinels.
 static UniCharArrayOffset *FindLineBreaks(ATSUTextLayout layout, SubRenderDiv *div, TextBreakLocatorRef breakLocator, UniCharArrayOffset *breaks, ItemCount *nbreaks, Fixed breakingWidth, const unichar *utext, NSInteger textLen)
 {
 	ItemCount breakCount=0;
@@ -1004,6 +1187,7 @@ static UniCharArrayOffset *FindLineBreaks(ATSUTextLayout layout, SubRenderDiv *d
 	return breaks;
 }
 
+/// Iteration state for drawing lines in a particular order (e.g., bottom-to-top for bottom alignment).
 typedef struct {
 	UniCharArrayOffset *breaks;
 	ItemCount breakCount;
@@ -1011,6 +1195,7 @@ typedef struct {
 	SInt8 direction;
 } BreakContext;
 
+/// Identifies which visual text layer is being rendered.
 typedef enum {
 	kTextLayerShadow,
 	kTextLayerOutline,
@@ -1018,6 +1203,15 @@ typedef enum {
 	kTextLayerPrimaryUnstyled
 } SubTextLayer;
 
+/// Configures Core Graphics state for a span and text layer, managing transparency layers when alpha changes.
+/// - Parameters:
+///   - c: The graphics context.
+///   - spanEx: The current span's rendering state.
+///   - lastSpanEx: The previously rendered span's state, or `NULL`.
+///   - div: The render division.
+///   - textType: The layer being rendered.
+///   - endLayer: Whether a transparency layer is currently active.
+/// - Returns: `YES` if a transparency layer remains active after configuration; otherwise `NO`.
 static BOOL SetupCGForSpan(CGContextRef c, SubATSUISpanExtra *spanEx, SubATSUISpanExtra *lastSpanEx, SubRenderDiv *div, SubTextLayer textType, BOOL endLayer)
 {	
 #define if_different(x) if (!lastSpanEx || lastSpanEx-> x != spanEx-> x)
@@ -1071,6 +1265,18 @@ static BOOL SetupCGForSpan(CGContextRef c, SubATSUISpanExtra *spanEx, SubATSUISp
 	return endLayer;
 }
 
+/// Draws a single laid-out line segment for the specified text layer.
+/// Handles newline skipping and box-style borders.
+/// - Parameters:
+///   - layout: The ATSUI text layout.
+///   - thisBreak: The start offset of the line segment.
+///   - lineLen: The length of the line segment.
+///   - penX: The pen X position in Fixed coordinates.
+///   - penY: The pen Y position in Fixed coordinates.
+///   - c: The graphics context.
+///   - div: The render division.
+///   - spanEx: Span rendering state used for box-border calculations.
+///   - textType: The layer to draw.
 static void RenderActualLine(ATSUTextLayout layout, UniCharArrayOffset thisBreak, UniCharArrayOffset lineLen, Fixed penX, Fixed penY, CGContextRef c, SubRenderDiv *div, SubATSUISpanExtra *spanEx, SubTextLayer textType)
 {
 	//ATS bug(?) with some fonts:
@@ -1099,6 +1305,18 @@ static void RenderActualLine(ATSUTextLayout layout, UniCharArrayOffset thisBreak
 	} else ATSUDrawText(layout, thisBreak, lineLen, penX, penY);
 }
 
+/// Draws all lines for a render division for a given text layer.
+/// Handles single-pass and multi-span (complex) rendering paths.
+/// - Parameters:
+///   - c: The graphics context.
+///   - layout: The ATSUI text layout.
+///   - div: The render division.
+///   - breakc: Line iteration context.
+///   - penX: The starting pen X position in Fixed coordinates.
+///   - penY: The starting pen Y position in Fixed coordinates.
+///   - firstSpanEx: The first span's rendering state (used for simple rendering).
+///   - textType: The layer to draw.
+/// - Returns: The updated pen Y position after drawing all lines.
 static Fixed DrawTextLines(CGContextRef c, ATSUTextLayout layout, SubRenderDiv *div, const BreakContext breakc, Fixed penX, Fixed penY, SubATSUISpanExtra *firstSpanEx, SubTextLayer textType)
 {
 	const CGTextDrawingMode textModes[] = {kCGTextFillStroke, kCGTextStroke, kCGTextFill, kCGTextFill};
@@ -1161,6 +1379,15 @@ static Fixed DrawTextLines(CGContextRef c, ATSUTextLayout layout, SubRenderDiv *
 	return penY;
 }
 
+/// Draws a complete text division (shadow, outline, and primary layers) using ATSUI.
+/// - Parameters:
+///   - c: The graphics context.
+///   - layout: The ATSUI text layout.
+///   - div: The render division.
+///   - breakc: Line iteration context.
+///   - penX: The starting pen X position in Fixed coordinates.
+///   - penY: The starting pen Y position in Fixed coordinates.
+/// - Returns: The updated pen Y position after drawing the division.
 static Fixed DrawOneTextDiv(CGContextRef c, ATSUTextLayout layout, SubRenderDiv *div, const BreakContext breakc, Fixed penX, Fixed penY)
 {
 	SubRenderSpan *firstSpan = [div->spans objectAtIndex:0];
@@ -1209,6 +1436,13 @@ static Fixed DrawOneTextDiv(CGContextRef c, ATSUTextLayout layout, SubRenderDiv 
 	return penY;
 }
 
+/// Draws a single vector-drawing (ASS `\p`) path for a specific text layer.
+/// - Parameters:
+///   - c: The graphics context.
+///   - path: The path to draw.
+///   - div: The render division.
+///   - firstSpanEx: Span rendering state.
+///   - textType: The layer to draw.
 static void drawShapePart(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubATSUISpanExtra *firstSpanEx, SubTextLayer textType)
 {
 	const CGPathDrawingMode textModes[] = {kCGPathFillStroke, kCGPathStroke, kCGPathFill, kCGPathFill};
@@ -1225,6 +1459,12 @@ static void drawShapePart(CGContextRef c, CGPathRef path, SubRenderDiv *div, Sub
 	if (endLayer) CGContextEndTransparencyLayer(c);
 }
 
+/// Draws a complete vector-drawing (ASS `\p`) shape with shadow, outline, and fill layers.
+/// - Parameters:
+///   - c: The graphics context.
+///   - path: The path to draw.
+///   - div: The render division.
+///   - firstSpanEx: Span rendering state.
 static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubATSUISpanExtra *firstSpanEx)
 {
 	BOOL drawShadow, drawOutline, clearOutlineInnerStroke;
@@ -1271,6 +1511,11 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubATSU
 
 #pragma mark Main Renderer Function
 
+/// Renders a parsed subtitle packet into a Core Graphics context.
+/// - Parameters:
+///   - packet: The subtitle packet/text to parse and render.
+///   - c: The destination Core Graphics context.
+///   - size: The target render size in pixels; the renderer scales from its configured video size if needed.
 -(void)renderPacket:(NSString *)packet inContext:(CGContextRef)c size:(CGSize)size
 {
 	Fixed bottomPen = 0, topPen = 0, centerPen = 0, *storePen=NULL;
@@ -1442,6 +1687,7 @@ static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubATSU
 	CGContextRestoreGState(c);
 }
 
+/// Releases renderer-owned resources (break buffer, text break locator, color space, ATSUI layout).
 -(void)dealloc
 {
 	free(breakBuffer);

@@ -25,7 +25,7 @@ void SubRendererRenderPacket(SubRendererRef s, CGContextRef c, CFStringRef str, 
 
 void SubRendererPrerollFromCFHeader(CFStringRef header)
 {
-	id<SubRenderer> s = [[SubCoreTextRenderer alloc] initWithScriptType:header ? kSubTypeSSA : kSubTypeSRT header:(__bridge NSString *)(header) videoWidth:640 videoHeight:480];
+	id<SubRenderer> s = [[SubCoreTextRenderer3 alloc] initWithScriptType:header ? kSubTypeSSA : kSubTypeSRT header:(__bridge NSString *)(header) videoWidth:640 videoHeight:480];
 	
 	CGColorSpaceRef csp = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 	void *buf = malloc(640 * 480 * 4);
@@ -82,7 +82,7 @@ SubRendererRef SubRendererCreateCF(bool isSSA, CFStringRef header, int width, in
 	@autoreleasepool {
 		SubRendererRef s = nil;
 		@try {
-			s = (SubRendererRef)CFBridgingRetain([[SubCoreTextRenderer alloc] initWithScriptType:isSSA ? kSubTypeSSA : kSubTypeSRT header:(__bridge NSString * _Nonnull)(header) videoWidth:width videoHeight:height]);
+			s = (SubRendererRef)CFBridgingRetain([[SubCoreTextRenderer3 alloc] initWithScriptType:isSSA ? kSubTypeSSA : kSubTypeSRT header:(__bridge NSString * _Nonnull)(header) videoWidth:width videoHeight:height]);
 		}
 		@catch (NSException *e) {
 			NSLog(@"Caught exception while creating SubRenderer - %@", e);

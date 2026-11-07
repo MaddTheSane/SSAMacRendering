@@ -1,9 +1,8 @@
 //
-//  SubCoreTextRenderer.h
+//  SubCoreTextRenderer3.h
 //  SSAMacRendering
 //
-//  Created by C.W. Betts on 8/3/17.
-//  Copyright © 2017 C.W. Betts. All rights reserved.
+//  CoreText port of SubATSUIRenderer.
 //
 
 #import <Foundation/Foundation.h>
@@ -12,9 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SubCoreTextRenderer : NSObject <SubRenderer>
+@interface SubCoreTextRenderer3 : NSObject <SubRenderer>
 
-/** 
+/**
  * @brief Creates a \c CGFont object and registers it for font matching via CoreText.
  *
  * @discussion Register fonts via <code>+registerFontsAtURL:error:</code> if fonts are stored as local files, as
@@ -45,9 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)unregisterFontsAtURL:(NSURL*)url error:(NSError**)error;
 
-
 - (nullable instancetype)initWithScriptType:(SubType)type header:(nullable NSString*)header videoWidth:(CGFloat)width videoHeight:(CGFloat)height;
-
 
 -(void)didCompleteHeaderParsing:(SubContext*)sc;
 -(void)didCompleteStyleParsing:(SubStyle*)s;
@@ -57,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)spanChangedTag:(SubSSATagName)tag span:(SubRenderSpan*)span div:(SubRenderDiv*)div param:(void*)p;
 
 @property (readonly) CGFloat aspectRatio;
+
 @end
 
 NS_ASSUME_NONNULL_END
