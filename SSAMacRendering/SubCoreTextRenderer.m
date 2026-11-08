@@ -16,25 +16,36 @@
 #include <math.h>
 #include <tgmath.h>
 
+/*
+ * TODO: position fixes
+ * TODO: respect scaling
+ * TODO: Fix positioning of shapes
+ *
+ * other TODOs as found in the source code!
+ */
+
 #define declare_bitfield(name, bits) uint8_t name[bits / 8 + 1]; bzero(name, sizeof(name));
 #define bitfield_set(name, bit) name[(bit) / 8] |= 1 << ((bit) % 8);
 #define bitfield_test(name, bit) ((name[(bit) / 8] & (1 << ((bit) % 8))) != 0)
+
+@class SubCoreTextSpanExtra;
 
 static CGColorRef CreateCGColorFromRGBA(SubRGBAColor c, CGColorSpaceRef cspace) CF_RETURNS_RETAINED;
 static CGColorRef CreateCGColorFromRGBOpaque(SubRGBAColor c, CGColorSpaceRef cspace) CF_RETURNS_RETAINED;
 static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha);
 static void FindAllPossibleLineBreaks(NSString *line, uint8_t *breakOpportunities);
+static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale);
 
-@interface SubCoreTextStyle3 : NSObject <NSCopying> {
+@interface SubCoreTextStyle : NSObject <NSCopying> {
 @public;
 	NSMutableDictionary<NSString*,id> *style;
 }
-- (instancetype)initWithCoreTextStyle:(NSDictionary<NSString*,id> *)_style;
+- (instancetype)initWithCoreTextStyle:(NSDictionary<NSString*,id> *)_style NS_DESIGNATED_INITIALIZER;
 @end
 
-@interface SubCoreTextSpanExtra3 : NSObject <NSCopying> {
+@interface SubCoreTextSpanExtra : NSObject <NSCopying> {
 	@public;
-	SubCoreTextStyle3 *style;
+	SubCoreTextStyle *style;
 	CGColorRef primaryColor, outlineColor, shadowColor;
 	CGFloat outlineRadius, shadowDist, scaleX, scaleY, primaryAlpha, outlineAlpha, angle, platformSizeScale, fontSize;
 	BOOL blurEdges, vertical;
@@ -43,7 +54,7 @@ static void FindAllPossibleLineBreaks(NSString *line, uint8_t *breakOpportunitie
 -(instancetype)initWithStyle:(SubStyle*)sstyle colorSpace:(CGColorSpaceRef)cs;
 @end
 
-@implementation SubCoreTextStyle3
+@implementation SubCoreTextStyle
 -(instancetype)initWithCoreTextStyle:(NSDictionary<NSString*,id> *)_style
 {
 	if (self = [super init]) {
@@ -52,15 +63,23 @@ static void FindAllPossibleLineBreaks(NSString *line, uint8_t *breakOpportunitie
 	return self;
 }
 
+- (instancetype)init
+{
+	if (self = [self initWithCoreTextStyle:@{}]) {
+		
+	}
+	return self;
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
-	SubCoreTextStyle3 *sty = [SubCoreTextStyle3 new];
+	SubCoreTextStyle *sty = [SubCoreTextStyle new];
 	sty->style = [style mutableCopy];
 	return sty;
 }
 @end
 
-@implementation SubCoreTextSpanExtra3
+@implementation SubCoreTextSpanExtra
 
 static CGColorRef CreateCGColorFromRGBA(SubRGBAColor c, CGColorSpaceRef cspace)
 {
@@ -85,7 +104,7 @@ static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha)
 - (instancetype)initWithStyle:(SubStyle*)sstyle colorSpace:(CGColorSpaceRef)cs
 {
 	if (self = [super init]) {
-		SubCoreTextStyle3 *extra = sstyle.extra;
+		SubCoreTextStyle *extra = sstyle.extra;
 		style = [extra copy];
 		primaryColor = CreateCGColorFromRGBOpaque(sstyle->primaryColor, cs);
 		primaryAlpha = sstyle->primaryColor.alpha;
@@ -107,7 +126,7 @@ static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha)
 
 -(id)copyWithZone:(NSZone*)zone
 {
-	SubCoreTextSpanExtra3 *ret = [[SubCoreTextSpanExtra3 alloc] init];
+	SubCoreTextSpanExtra *ret = [[SubCoreTextSpanExtra alloc] init];
 	ret->style = [style copy];
 	ret->primaryColor = CGColorRetain(primaryColor);
 	ret->primaryAlpha = primaryAlpha;
@@ -171,7 +190,7 @@ typedef struct {
 	SInt8 direction;
 } BreakContext;
 
-@implementation SubCoreTextRenderer3
+@implementation SubCoreTextRenderer
 {
 	SubContext *context;
 	CGColorSpaceRef srgbCSpace;
@@ -272,7 +291,7 @@ typedef struct {
 		context = [[SubContext alloc] initWithScriptType:type headers:headers styles:styles delegate:self];
 		breakBuffer = malloc(sizeof(UniCharArrayOffset) * 2);
 		srgbCSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-		drawTextBounds = CFPreferencesGetAppBooleanValue(CFSTR("DrawSubTextBounds"), PERIAN_PREF_DOMAIN, NULL);
+		drawTextBounds = YES; //CFPreferencesGetAppBooleanValue(CFSTR("DrawSubTextBounds"), PERIAN_PREF_DOMAIN, NULL);
 	}
 	return self;
 }
@@ -287,8 +306,6 @@ typedef struct {
 {
 	return videoWidth / videoHeight;
 }
-
-static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScale);
 
 -(void)didCompleteStyleParsing:(SubStyle*)s
 {
@@ -338,15 +355,15 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 		dict[(NSString*)kCTKernAttributeName] = @(s->tracking);
 	}
 
-	s.extra = [[SubCoreTextStyle3 alloc] initWithCoreTextStyle:dict];
+	s.extra = [[SubCoreTextStyle alloc] initWithCoreTextStyle:dict];
 }
 
 -(void)didCreateStartingSpan:(SubRenderSpan *)span forDiv:(SubRenderDiv *)div
 {
-	span.extra = [[SubCoreTextSpanExtra3 alloc] initWithStyle:div->styleLine colorSpace:srgbCSpace];
+	span.extra = [[SubCoreTextSpanExtra alloc] initWithStyle:div->styleLine colorSpace:srgbCSpace];
 }
 
-static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScale)
+static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale)
 {
 	NSMutableDictionary *style = spanEx->style->style;
 	NSFont *aFont = style[(NSString*)kCTFontAttributeName];
@@ -366,7 +383,7 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 
 -(void)spanChangedTag:(SubSSATagName)tag span:(SubRenderSpan*)span div:(SubRenderDiv*)div param:(void*)p
 {
-	SubCoreTextSpanExtra3 *spanEx = span.extra;
+	SubCoreTextSpanExtra *spanEx = span.extra;
 	NSMutableDictionary *style = spanEx->style->style;
 	BOOL isFirstSpan = [div->spans count] == 0;
 	CGColorRef color;
@@ -510,7 +527,7 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 		{
 			SubStyle *sstyle = [context->styles objectForKey:sval];
 			if (!sstyle) sstyle = div->styleLine;
-			span.extra = [[SubCoreTextSpanExtra3 alloc] initWithStyle:sstyle colorSpace:srgbCSpace];
+			span.extra = [[SubCoreTextSpanExtra alloc] initWithStyle:sstyle colorSpace:srgbCSpace];
 		}
 			break;
 		case tag_be:
@@ -595,7 +612,7 @@ static NSMutableAttributedString *AttributedStringForDiv(SubRenderDiv *div)
 		NSUInteger next = (i == span_count-1) ? astr.length : ((SubRenderSpan*)[div->spans objectAtIndex:i+1])->offset;
 		if (start >= astr.length || next <= start) continue;
 		if (next > astr.length) next = astr.length;
-		SubCoreTextSpanExtra3 *ex = span.extra;
+		SubCoreTextSpanExtra *ex = span.extra;
 		NSMutableDictionary *attrs = [ex->style->style mutableCopy] ?: [NSMutableDictionary dictionary];
 		// Primary text color for CoreText drawing when used in fill contexts isn't relied upon here
 		// (renderer sets CG colors per layer), but keep font/underline/kerning.
@@ -658,7 +675,7 @@ static void VisualizeLayoutLineHeights(CGContextRef c, NSArray *lines, UniCharAr
 	}
 }
 
-static BOOL SetupCGForSpan(CGContextRef c, SubCoreTextSpanExtra3 *spanEx, SubCoreTextSpanExtra3 *lastSpanEx, SubRenderDiv *div, SubTextLayer textType, BOOL endLayer)
+static BOOL SetupCGForSpan(CGContextRef c, SubCoreTextSpanExtra *spanEx, SubCoreTextSpanExtra *lastSpanEx, SubRenderDiv *div, SubTextLayer textType, BOOL endLayer)
 {
 #define if_different(x) if (!lastSpanEx || lastSpanEx-> x != spanEx-> x)
 	switch (textType) {
@@ -721,7 +738,7 @@ static void DrawCTLineWithMode(CGContextRef c, CTLineRef line, SubTextLayer text
 	}
 }
 
-static void RenderActualLine(CGContextRef c, CTLineRef line, UniCharArrayOffset thisBreak, UniCharArrayOffset lineLen, CGFloat penX, CGFloat penY, SubRenderDiv *div, SubCoreTextSpanExtra3 *spanEx, SubTextLayer textType)
+static void RenderActualLine(CGContextRef c, CTLineRef line, UniCharArrayOffset thisBreak, UniCharArrayOffset lineLen, CGFloat penX, CGFloat penY, SubRenderDiv *div, SubCoreTextSpanExtra *spanEx, SubTextLayer textType)
 {
 	if (!line) return;
 	if (lineLen == 0) return;
@@ -745,10 +762,10 @@ static void RenderActualLine(CGContextRef c, CTLineRef line, UniCharArrayOffset 
 	DrawCTLineWithMode(c, line, textType);
 }
 
-static CGFloat DrawTextLinesAligned(CGContextRef c, NSAttributedString *astr, NSArray *ctLines, SubRenderDiv *div, const BreakContext breakc, CGFloat penX, CGFloat penY, SubCoreTextSpanExtra3 *firstSpanEx, SubTextLayer textType, CGFloat blockWidth)
+static CGFloat DrawTextLinesAligned(CGContextRef c, NSAttributedString *astr, NSArray *ctLines, SubRenderDiv *div, const BreakContext breakc, CGFloat penX, CGFloat penY, SubCoreTextSpanExtra *firstSpanEx, SubTextLayer textType, CGFloat blockWidth)
 {
 	const CGTextDrawingMode textModes[] = {kCGTextFillStroke, kCGTextStroke, kCGTextFill, kCGTextFill};
-	SubCoreTextSpanExtra3 *lastSpanEx = nil;
+	SubCoreTextSpanExtra *lastSpanEx = nil;
 	BOOL endLayer = NO, multipleParts = !!(div->render_complexity & renderMultipleParts);
 
 	CGContextSetTextDrawingMode(c, textModes[textType]);
@@ -783,7 +800,7 @@ static CGFloat DrawTextLinesAligned(CGContextRef c, NSAttributedString *astr, NS
 			NSInteger j, nspans = [div->spans count];
 			for (j = 0; j < nspans; j++) {
 				SubRenderSpan *span = [div->spans objectAtIndex:j];
-				SubCoreTextSpanExtra3 *spanEx = span.extra;
+				SubCoreTextSpanExtra *spanEx = span.extra;
 				UniCharArrayOffset spanLen, drawStart, drawLen;
 				if (j < nspans-1) {
 					SubRenderSpan *nextSpan = [div->spans objectAtIndex:j+1];
@@ -822,7 +839,7 @@ static CGFloat DrawTextLinesAligned(CGContextRef c, NSAttributedString *astr, NS
 static CGFloat DrawOneTextDiv(CGContextRef c, NSAttributedString *astr, NSArray *ctLines, SubRenderDiv *div, const BreakContext breakc, CGFloat penX, CGFloat penY, CGFloat blockWidth)
 {
 	SubRenderSpan *firstSpan = [div->spans objectAtIndex:0];
-	SubCoreTextSpanExtra3 *firstSpanEx = firstSpan.extra;
+	SubCoreTextSpanExtra *firstSpanEx = firstSpan.extra;
 	BOOL drawShadow, drawOutline, clearOutlineInnerStroke;
 	BOOL endLayer = NO;
 
@@ -867,10 +884,10 @@ static CGFloat DrawOneTextDiv(CGContextRef c, NSAttributedString *astr, NSArray 
 	return penY;
 }
 
-static void drawShapePart(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCoreTextSpanExtra3 *firstSpanEx, SubTextLayer textType)
+static void drawShapePart(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCoreTextSpanExtra *firstSpanEx, SubTextLayer textType)
 {
 	const CGPathDrawingMode textModes[] = {kCGPathFillStroke, kCGPathStroke, kCGPathFill, kCGPathFill};
-	SubCoreTextSpanExtra3 *lastSpanEx = nil;
+	SubCoreTextSpanExtra *lastSpanEx = nil;
 	BOOL endLayer = NO, multipleParts = !!(div->render_complexity & renderMultipleParts);
 	if (!multipleParts) {
 		endLayer = SetupCGForSpan(c, firstSpanEx, lastSpanEx, div, textType, endLayer);
@@ -883,7 +900,7 @@ static void drawShapePart(CGContextRef c, CGPathRef path, SubRenderDiv *div, Sub
 	if (endLayer) CGContextEndTransparencyLayer(c);
 }
 
-static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCoreTextSpanExtra3 *firstSpanEx)
+static void drawShape(CGContextRef c, CGPathRef path, SubRenderDiv *div, SubCoreTextSpanExtra *firstSpanEx)
 {
 	BOOL drawShadow, drawOutline, clearOutlineInnerStroke;
 	BOOL endLayer = NO;
@@ -1136,7 +1153,7 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 		}
 
 		SubRenderSpan *firstSpan = [div->spans objectAtIndex:0];
-		SubCoreTextSpanExtra3 *firstSpanEx = firstSpan.extra;
+		SubCoreTextSpanExtra *firstSpanEx = firstSpan.extra;
 
 		if (div->scale > 0) {
 			CGContextSaveGState(c);
@@ -1165,7 +1182,9 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 				CGFloat localPenY = 0;
 				breakc.breakCount = breakCount;
 				breakc.breaks = breaks;
-				if (drawTextBounds) VisualizeLayoutLineHeights(c, ctLines, breaks, breakCount, div->styleLine->outlineRadius, localPenX, localPenY);
+				if (drawTextBounds) {
+					VisualizeLayoutLineHeights(c, ctLines, breaks, breakCount, div->styleLine->outlineRadius, localPenX, localPenY);
+				}
 				localPenY = DrawOneTextDiv(c, astr, ctLines, div, breakc, localPenX, localPenY, blockWidth);
 				CGContextRestoreGState(c);
 				if (storePen) *storePen = localPenY; // best-effort in rotated space
@@ -1174,8 +1193,9 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 
 			breakc.breakCount = breakCount;
 			breakc.breaks = breaks;
-			if (drawTextBounds)
+			if (drawTextBounds) {
 				VisualizeLayoutLineHeights(c, ctLines, breaks, breakCount, div->styleLine->outlineRadius, penX, penY);
+			}
 
 			penY = DrawOneTextDiv(c, astr, ctLines, div, breakc, penX, penY, blockWidth);
 			if (storePen) *storePen = penY;

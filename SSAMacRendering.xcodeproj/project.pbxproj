@@ -263,8 +263,6 @@
 		557C8EEB1F339151004D986C /* SubRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubRenderer.h; sourceTree = "<group>"; };
 		557C8EEC1F339151004D986C /* SubUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubUtilities.h; sourceTree = "<group>"; };
 		557C8EED1F339151004D986C /* SubUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubUtilities.m; sourceTree = "<group>"; };
-		557C8EFD1F33945F004D986C /* SubCoreTextRendererOld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubCoreTextRendererOld.h; sourceTree = "<group>"; };
-		557C8EFE1F33945F004D986C /* SubCoreTextRendererOld.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubCoreTextRendererOld.m; sourceTree = "<group>"; };
 		557C8F011F339525004D986C /* CommonUtils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CommonUtils.c; sourceTree = "<group>"; };
 		557C8F021F339525004D986C /* CommonUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonUtils.h; sourceTree = "<group>"; };
 		557C8F051F3396B1004D986C /* Codecprintf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Codecprintf.h; sourceTree = "<group>"; };
@@ -450,8 +448,6 @@
 				557C8EED1F339151004D986C /* SubUtilities.m */,
 				557C8ED71F33913E004D986C /* SSAMacRendering.h */,
 				557C8ED81F33913E004D986C /* Info.plist */,
-				557C8EFD1F33945F004D986C /* SubCoreTextRendererOld.h */,
-				557C8EFE1F33945F004D986C /* SubCoreTextRendererOld.m */,
 				5567D2A0309F1D0000C044F5 /* SubCoreTextRenderer.h */,
 				5567D2A1309F1D0000C044F5 /* SubCoreTextRenderer.m */,
 				557C8F051F3396B1004D986C /* Codecprintf.h */,
