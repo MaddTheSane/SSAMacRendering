@@ -29,7 +29,7 @@ void SubRendererPrerollFromCFHeader(CFStringRef header)
 	
 	CGColorSpaceRef csp = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 	void *buf = malloc(640 * 480 * 4);
-	CGContextRef c = CGBitmapContextCreate(buf,640,480,8,640 * 4,csp,kCGImageAlphaPremultipliedFirst);
+	CGContextRef c = CGBitmapContextCreate(buf, 640, 480, 8, 640 * 4, csp, (CGBitmapInfo)kCGImageAlphaPremultipliedFirst);
 	
 	if (!header) {
 		[s renderPacket:@"Abcde ." inContext:c size:CGSizeMake(640, 480)];

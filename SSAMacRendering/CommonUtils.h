@@ -34,9 +34,9 @@ extern "C" {
 	bool IsFrameDroppingEnabled(void);
 
 //! does the current process break if we return errors in Preflight?
-	bool IsForcedDecodeEnabled(void);
+bool IsForcedDecodeEnabled(void);
 
-//! CFPreferencesCopyAppValue() wrapper which checks the type of the value returned
+//! `CFPreferencesCopyAppValue()` wrapper which checks the type of the value returned
 CFPropertyListRef CopyPreferencesValueTyped(CFStringRef key, CFTypeID type) CF_RETURNS_RETAINED;
 
 extern CGFloat GetWinCTFontSizeScale(CTFontRef font);

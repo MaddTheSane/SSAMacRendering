@@ -10,7 +10,6 @@
 		550BCA3D1F98216D0077C5FC /* CTAdditionsSwiftHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 550BCA3C1F98216D0077C5FC /* CTAdditionsSwiftHelpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		550BCA3F1F9828100077C5FC /* CTAdditionsSwiftHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 550BCA3E1F9828100077C5FC /* CTAdditionsSwiftHelpers.m */; };
 		550BCA411F9838E40077C5FC /* NSBezierPath+CGPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550BCA401F9838E40077C5FC /* NSBezierPath+CGPath.swift */; };
-		553A1FD12E7BB41600C185CE /* SubATSUIRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 557C8EE41F339151004D986C /* SubATSUIRenderer.m */; };
 		555234651FACDF2A0033FD48 /* CTFrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555234641FACDF2A0033FD48 /* CTFrameAdditions.swift */; };
 		5552346B1FACE9080033FD48 /* CTFontAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5552346A1FACE9080033FD48 /* CTFontAdditions.swift */; };
 		555762022AE9B67900120C89 /* SwiftAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557C8F3C1F33B8A6004D986C /* SwiftAdditions.swift */; };
@@ -20,7 +19,6 @@
 		5567D2A2309F1D0000C044F5 /* SubCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5567D2A0309F1D0000C044F5 /* SubCoreTextRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5567D2A3309F1D0000C044F5 /* SubCoreTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5567D2A1309F1D0000C044F5 /* SubCoreTextRenderer.m */; };
 		557C8ED91F33913E004D986C /* SSAMacRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8ED71F33913E004D986C /* SSAMacRendering.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		557C8EF21F339151004D986C /* SubATSUIRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EE31F339151004D986C /* SubATSUIRenderer.h */; };
 		557C8EF41F339151004D986C /* SubContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EE51F339151004D986C /* SubContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		557C8EF51F339151004D986C /* SubContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 557C8EE61F339151004D986C /* SubContext.m */; };
 		557C8EF61F339151004D986C /* SubImport.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EE71F339151004D986C /* SubImport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -558,7 +556,6 @@
 			files = (
 				557C8EF81F339151004D986C /* SubParsing.h in Headers */,
 				557C8ED91F33913E004D986C /* SSAMacRendering.h in Headers */,
-				557C8EF21F339151004D986C /* SubATSUIRenderer.h in Headers */,
 				557C8EF61F339151004D986C /* SubImport.h in Headers */,
 				557C8EFB1F339151004D986C /* SubUtilities.h in Headers */,
 				557C8EFA1F339151004D986C /* SubRenderer.h in Headers */,
@@ -881,7 +878,6 @@
 				555762022AE9B67900120C89 /* SwiftAdditions.swift in Sources */,
 				557C8EFC1F339151004D986C /* SubUtilities.m in Sources */,
 				557C8F031F339525004D986C /* CommonUtils.c in Sources */,
-				553A1FD12E7BB41600C185CE /* SubATSUIRenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

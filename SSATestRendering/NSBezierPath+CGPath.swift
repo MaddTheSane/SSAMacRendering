@@ -67,10 +67,10 @@ public extension NSBezierPath {
 		
 		for i in 0..<elementCount {
 			switch element(at: i, associatedPoints: &points) {
-			case .moveToBezierPathElement:
+			case .moveTo:
 				path.move(to: points[0])
 				
-			case .lineToBezierPathElement:
+			case .lineTo:
 				path.addLine(to: points[0])
 				didClosePath = false
 				
@@ -78,7 +78,7 @@ public extension NSBezierPath {
 				path.addCurve(to: points[0], control1: points[1], control2: points[2])
 				didClosePath = false
 				
-			case .closePathBezierPathElement:
+			case .closePath:
 				path.closeSubpath()
 				didClosePath = true
 				
