@@ -28,14 +28,6 @@ public func parseSSAAlignment(_ b: UInt8) -> (h: SubAlignmentH, v: SubAlignmentV
 }
 
 public extension SubRGBAColor {
-	@inlinable init(rgb: UInt32) {
-		self = SubParseSSAColor(rgb)
-	}
-	
-	@inlinable init(string: String) {
-		self = SubParseSSAColorString(string)
-	}
-	
 	var cgColor: CGColor {
 		let cols = [CGFloat(self.red), CGFloat(self.green), CGFloat(self.blue), CGFloat(self.alpha)]
 		return CGColor(colorSpace: CGColorSpace(name: CGColorSpace.sRGB)!, components: cols)!

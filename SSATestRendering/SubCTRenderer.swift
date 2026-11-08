@@ -743,13 +743,13 @@ if (storePen) *storePen = penY;
 		}
 		
 		var someExtras = [String: Any]()
-		someExtras[NSAttributedStringKey.CoreText.font.rawValue] = font
-		someExtras[NSAttributedStringKey.CoreText.fontTraits.rawValue] = fontTraits
+		someExtras[NSAttributedString.Key.CoreText.font.rawValue] = font
+		someExtras[NSAttributedString.Key.CoreText.fontTraits.rawValue] = fontTraits
 		if s.underline {
-			someExtras[NSAttributedStringKey.CoreText.underlineStyle.rawValue] = CTUnderlineStyle.single.rawValue
+			someExtras[NSAttributedString.Key.CoreText.underlineStyle.rawValue] = CTUnderlineStyle.single.rawValue
 		}
 		if s.strikeout {
-			someExtras[NSAttributedStringKey.strikethroughStyle.rawValue] = NSUnderlineStyle.styleSingle.rawValue
+			someExtras[NSAttributedString.Key.strikethroughStyle.rawValue] = NSUnderlineStyle.single.rawValue
 		}
 		
 		/* TODO: implement?
@@ -797,7 +797,7 @@ SetATSUStyleOther(style, kATSUAfterWithStreamShiftTag, sizeof(Fixed), &tracking)
 
 		func colorv() {
 			let tmpVal = p.assumingMemoryBound(to: UInt32.self).pointee
-			let hi = SubParseSSAColor(tmpVal)
+			let hi = SubRGBAColor(rgb: tmpVal)
 			color = CGColor.createFromRGBA(hi, colorspace: CGColorSpace(name: CGColorSpace.sRGB)!)!
 		}
 		
@@ -863,7 +863,7 @@ SetATSUStyleOther(style, kATSUAfterWithStreamShiftTag, sizeof(Fixed), &tracking)
 			if !isFirstSpan {
 				div.renderComplexity |= renderMultipleParts;
 			}
-			let rgba = SubParseSSAColor(p.assumingMemoryBound(to: UInt32.self).pointee)
+			let rgba = SubRGBAColor(rgb: p.assumingMemoryBound(to: UInt32.self).pointee)
 			spanEx.outlineColor = CGColor.createFromRGBOpaque(rgba, colorspace: CGColorSpace(name: CGColorSpace.sRGB)!)
 			spanEx.outlineAlpha = CGFloat(rgba.alpha)
 			
@@ -981,11 +981,11 @@ SetATSUStyleOther(style, kATSUAfterWithStreamShiftTag, sizeof(Fixed), &tracking)
 }
 
 private func renderLine(_ thisBreak: String, context: CGContext, spanExtra: SubCTRenderer.SpanExtra) {
-	var attribs = [NSAttributedStringKey: Any]()
-	attribs[NSAttributedStringKey.CoreText.foregroundColor] = spanExtra.primaryColor
-	attribs[NSAttributedStringKey.CoreText.font] = spanExtra.font
-	attribs[NSAttributedStringKey.CoreText.strokeColor] = spanExtra.outlineColor
-	attribs[NSAttributedStringKey.CoreText.strokeWidth] = spanExtra.outlineRadius
+	var attribs = [NSAttributedString.Key: Any]()
+	attribs[NSAttributedString.Key.CoreText.foregroundColor] = spanExtra.primaryColor
+	attribs[NSAttributedString.Key.CoreText.font] = spanExtra.font
+	attribs[NSAttributedString.Key.CoreText.strokeColor] = spanExtra.outlineColor
+	attribs[NSAttributedString.Key.CoreText.strokeWidth] = spanExtra.outlineRadius
 	let attrBreak = NSAttributedString(string: thisBreak, attributes: attribs)
 	let line = CTLineCreateWithAttributedString(attrBreak)
 	_=line

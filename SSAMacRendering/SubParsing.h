@@ -99,8 +99,8 @@ typedef struct SubRenderFade {
 @property (readonly) UniCharArrayOffset offset;
 @end
 
-extern SubRGBAColor SubParseSSAColor(unsigned rgb);
-extern SubRGBAColor SubParseSSAColorString(NSString *c);
+extern SubRGBAColor SubParseSSAColor(unsigned rgb) NS_SWIFT_NAME(SubRGBAColor.init(rgb:));
+extern SubRGBAColor SubParseSSAColorString(NSString *c) NS_SWIFT_NAME(SubRGBAColor.init(string:));
 
 extern UInt8 SubASSFromSSAAlignment(UInt8 a);
 extern void  SubParseASSAlignment(UInt8 a, SubAlignmentH *alignH, SubAlignmentV *alignV) NS_REFINED_FOR_SWIFT;

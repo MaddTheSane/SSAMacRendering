@@ -332,6 +332,7 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 	}
 
 	dict[(NSString*)kCTFontAttributeName] = newFont;
+	dict[(NSString*)kCTForegroundColorFromContextAttributeName] = @YES;
 
 	if (s->tracking > 0) {
 		dict[(NSString*)kCTKernAttributeName] = @(s->tracking);
@@ -405,6 +406,7 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 			break;
 		case tag_s:
 			bv();
+			// TODO: strikethrough
 			break;
 		case tag_bord:
 			fv();
@@ -461,12 +463,14 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 			fv();
 			spanEx->scaleX = fval / 100.;
 			mat = CGAffineTransformMakeScale(spanEx->scaleX, spanEx->scaleY);
+			//TODO: set scale
 			(void)mat;
 			break;
 		case tag_fscy:
 			fv();
 			spanEx->scaleY = fval / 100.;
 			mat = CGAffineTransformMakeScale(spanEx->scaleX, spanEx->scaleY);
+			//TODO: set scale
 			(void)mat;
 			break;
 		case tag_fsp:
@@ -511,7 +515,7 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 			break;
 		case tag_be:
 			bv();
-			if (!isFirstSpan) div->render_complexity |= renderMultipleParts;
+			if (!isFirstSpan) div->render_complexity |= renderMultipleParts; //FIXME: blur edges
 			spanEx->blurEdges = bval;
 			break;
 		case tag_p:
@@ -519,9 +523,11 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 			div->scale = fval;
 			break;
 		case tag_frx:
+			fv();
 			Codecprintf(NULL, "Unimplemented SSA tag 'frx'\n");
 			break;
 		case tag_fry:
+			fv();
 			Codecprintf(NULL, "Unimplemented SSA tag 'fry'\n");
 			break;
 		case tag_2c:
@@ -538,12 +544,15 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 			Codecprintf(NULL, "Unimplemented SSA tag 't'\n");
 			break;
 		case tag_pbo:
+			fv();
 			Codecprintf(NULL, "Unimplemented SSA tag 'pbo'\n");
 			break;
 		case tag_fad:
+			// TODO: fad support
 			Codecprintf(NULL, "Unimplemented SSA tag 'fad'\n");
 			break;
 		case tag_fade:
+			// TODO: fade support
 			Codecprintf(NULL, "Unimplemented SSA tag 'fade'\n");
 			break;
 		default:
@@ -590,9 +599,13 @@ static NSMutableAttributedString *AttributedStringForDiv(SubRenderDiv *div)
 		NSMutableDictionary *attrs = [ex->style->style mutableCopy] ?: [NSMutableDictionary dictionary];
 		// Primary text color for CoreText drawing when used in fill contexts isn't relied upon here
 		// (renderer sets CG colors per layer), but keep font/underline/kerning.
+		if (ex->outlineColor) {
+			attrs[(NSString*)kCTStrokeColorAttributeName] = (__bridge id _Nullable)(ex->outlineColor);
+		}
 		if (ex->vertical) {
 			attrs[(NSString*)kCTVerticalFormsAttributeName] = @YES;
 		}
+		
 		[astr setAttributes:attrs range:NSMakeRange(start, next - start)];
 	}
 	return astr;
