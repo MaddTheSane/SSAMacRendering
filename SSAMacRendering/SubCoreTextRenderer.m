@@ -619,8 +619,8 @@ static NSMutableAttributedString *AttributedStringForDiv(SubRenderDiv *div)
 		if (ex->outlineColor) {
 			attrs[(NSString*)kCTStrokeColorAttributeName] = (__bridge id _Nullable)(ex->outlineColor);
 		}
-		if (ex->vertical) {
-			attrs[(NSString*)kCTVerticalFormsAttributeName] = @YES;
+		if (ex->primaryColor) {
+			attrs[(NSString*)kCTForegroundColorAttributeName] = (__bridge id _Nullable)(ex->primaryColor);
 		}
 		
 		[astr setAttributes:attrs range:NSMakeRange(start, next - start)];

@@ -23,6 +23,11 @@
 #import <UniversalDetector/UniversalDetector.h>
 #import "Codecprintf.h"
 
+/// Adds a uniform cubic B-spline curve using an array of control points.
+///
+/// Requires at least 4 points to generate a curve.
+static void OurCGMutablePathAddUniformCubicBSpline(CGMutablePathRef thePath, const CGAffineTransform* transform, NSArray<NSValue*> *controlPoints);
+
 NSArray *SubSplitStringIgnoringWhitespace(NSString *str, NSString *split)
 {
 	NSMutableArray *values = [[str componentsSeparatedByString:split] mutableCopy];
@@ -236,8 +241,40 @@ CGPathRef CreateSubParseSubShapesWithString(NSString *aStr, const CGAffineTransf
 			if ([scanner scanDouble:&x] && [scanner scanDouble:&y]) {
 				CGPathAddLineToPoint(bPath, m, x, y);
 			}
+		} else if ([oldScanned isEqualToString:@"s"]) {
+			// 3rd degree uniform b-spline to point N, must contain at
+			// least 3 coordinates
+			double startPtX = 0;
+			double startPtY = 0;
+			double ctrlPt1X = 0;
+			double ctrlPt1Y = 0;
+			double ctrlPt2X = 0;
+			double ctrlPt2Y = 0;
+			double ctrlPt3X = 0;
+			double ctrlPt3Y = 0;
+			if ([scanner scanDouble:&ctrlPt1X] && [scanner scanDouble:&ctrlPt1Y] &&
+				[scanner scanDouble:&ctrlPt2X] && [scanner scanDouble:&ctrlPt2Y] &&
+				[scanner scanDouble:&startPtX] && [scanner scanDouble:&startPtY] &&
+				[scanner scanDouble:&ctrlPt3X] && [scanner scanDouble:&ctrlPt3Y]) {
+				NSMutableArray<NSValue*> *a = [[NSMutableArray alloc] initWithCapacity:10];
+				[a addObject:@(NSMakePoint(ctrlPt1X, ctrlPt1Y))];
+				[a addObject:@(NSMakePoint(ctrlPt2X, ctrlPt2Y))];
+				[a addObject:@(NSMakePoint(startPtX, startPtY))];
+				[a addObject:@(NSMakePoint(ctrlPt3X, ctrlPt3Y))];
+				while ([scanner scanDouble:&ctrlPt1X] && [scanner scanDouble:&ctrlPt1Y]) {
+					[a addObject:@(NSMakePoint(ctrlPt1X, ctrlPt1Y))];
+				}
+				
+				OurCGMutablePathAddUniformCubicBSpline(bPath, m, a);
+			}
+		} else if ([oldScanned isEqualToString:@"p"]) {
+			// extend b-spline to <x>, <y>
+			double x = 0, y = 0;
+			if ([scanner scanDouble:&x] && [scanner scanDouble:&y]) {
+				//TODO: put it on the path... somehow.
+			}
 		} else {
-			// unhandled switches: p s
+			// unhandled switches: p
 			[scanner scanUpToCharactersFromSet:NSCharacterSet.whitespaceCharacterSet intoString:nil];
 		}
 	}
@@ -298,3 +335,44 @@ NSBezierPath *SubParseSubShapesWithString(NSString *aStr)
 	return bPath;
 }
 #endif
+
+static void OurCGMutablePathAddUniformCubicBSpline(CGMutablePathRef thePath, const CGAffineTransform* transform, NSArray<NSValue*> *controlPoints)
+{
+	if (controlPoints.count < 4) {
+		return;
+	}
+	
+	// Calculate the initial starting point of the spline
+	NSPoint p0 = [controlPoints[0] pointValue];
+	NSPoint p1 = [controlPoints[1] pointValue];
+	NSPoint p2 = [controlPoints[2] pointValue];
+	
+	CGFloat startX = (p0.x + 4 * p1.x + p2.x) / 6.0;
+	CGFloat startY = (p0.y + 4 * p1.y + p2.y) / 6.0;
+
+	// Move to the beginning of the spline if the path is empty
+	
+	if (CGPathIsEmpty(thePath)) {
+		CGPathMoveToPoint(thePath, transform, startX, startY);
+	} else {
+		CGPathAddLineToPoint(thePath, transform, startX, startY);
+	}
+	
+	// Iterate through the points to create cubic Bezier segments
+	NSInteger maxPoints = controlPoints.count - 3;
+	for (NSInteger i = 0; i > maxPoints ;i++) {
+		NSArray<NSValue*> *pts = @[controlPoints[i], controlPoints[i+1], controlPoints[i+2], controlPoints[i+3]];
+		
+		// Convert B-spline matrix coordinates into Bezier control points
+		CGFloat cp1X = (2 * [pts[1] pointValue].x + [pts[2] pointValue].x) / 3.0;
+		CGFloat cp1Y = (2 * [pts[1] pointValue].y + [pts[2] pointValue].y) / 3.0;
+		
+		CGFloat cp2X = ([pts[1] pointValue].x + 2 * [pts[2] pointValue].x) / 3.0;
+		CGFloat cp2Y = ([pts[1] pointValue].y + 2 * [pts[2] pointValue].y) / 3.0;
+		
+		CGFloat endX = ([pts[1] pointValue].x + 4 * [pts[2] pointValue].x + [pts[3] pointValue].x) / 6.0;
+		CGFloat endY = ([pts[1] pointValue].y + 4 * [pts[2] pointValue].y + [pts[3] pointValue].y) / 6.0;
+		
+		CGPathAddCurveToPoint(thePath, transform, cp1X, cp1Y, cp2X, cp2Y, endX, endY);
+	}
+}
