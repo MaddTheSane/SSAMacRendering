@@ -611,12 +611,6 @@ static NSMutableAttributedString *AttributedStringForDiv(SubRenderDiv *div)
 	return astr;
 }
 
-static CTLineRef CreateCTLineForAttributedString(NSAttributedString *astr)
-{
-	if (!astr) return NULL;
-	return CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)astr);
-}
-
 static CTLineRef CreateCTLineForRange(NSAttributedString *astr, CFRange range)
 {
 	if (!astr || range.length <= 0) return NULL;
@@ -1025,13 +1019,11 @@ static NSArray<id> *CreateCTLinesForBreaks(NSAttributedString *astr, UniCharArra
 		if (len < 0) len = 0;
 		CTLineRef line = CreateCTLineForRange(astr, CFRangeMake(loc, len));
 		if (line) {
-			[lines addObject:(__bridge id)line];
-			CFRelease(line);
+			[lines addObject:CFBridgingRelease(line)];
 		} else {
 			// placeholder empty line
 			CTLineRef empty = CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)[[NSAttributedString alloc] initWithString:@""]);
-			[lines addObject:(__bridge id)empty];
-			CFRelease(empty);
+			[lines addObject:CFBridgingRelease(empty)];
 		}
 	}
 	return lines;
@@ -1200,3 +1192,40 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 }
 
 @end
+
+#include "TTStructs.h"
+
+//! Windows and OS X use different TrueType fields to measure text.
+//! Some Windows fonts have one field set incorrectly(?), so we have to compensate.
+//! This should be cached
+CGFloat GetWinCTFontSizeScale(CTFontRef font)
+{
+	TT_Header headTable = {0};
+	TT_OS2 os2Table = {0};
+	
+	NSData *os2TableData = CFBridgingRelease(CTFontCopyTable(font, kCTFontTableOS2, kCTFontTableOptionNoOptions));
+	if (!os2TableData || os2TableData.length == 0) {
+		return 1;
+	}
+	NSData *headTableData = CFBridgingRelease(CTFontCopyTable(font, kCTFontTableHead, kCTFontTableOptionNoOptions));
+	if (!headTableData || headTableData.length == 0) {
+		return 1;
+	}
+	
+	[os2TableData getBytes:&os2Table length:MIN(os2TableData.length, sizeof(TT_OS2))];
+	[headTableData getBytes:&headTable length:MIN(headTableData.length, sizeof(TT_Header))];
+	
+	// ppem = units_per_em * lfheight / (winAscent + winDescent) c.f. WINE
+	// lfheight being SSA font size
+	unsigned short oA = EndianU16_BtoN(os2Table.usWinAscent), oD = EndianU16_BtoN(os2Table.usWinDescent);
+	unsigned int winSize = oA + oD;
+	
+	unsigned short unitsPerEM = CTFontGetUnitsPerEm(font);
+	unsigned short unitsPerEM2 = EndianU16_BtoN(headTable.Units_Per_EM);
+	
+	if (unitsPerEM != unitsPerEM2) {
+		Codecprintf(NULL, "unitsPerEM mismatch\n");
+	}
+	
+	return (winSize && unitsPerEM) ? ((CGFloat)unitsPerEM / (CGFloat)winSize) : 1;
+}

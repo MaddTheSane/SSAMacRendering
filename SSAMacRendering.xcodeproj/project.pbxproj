@@ -17,7 +17,6 @@
 		5557620B2AE9C61F00120C89 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5557620A2AE9C61F00120C89 /* main.swift */; };
 		555762142AE9C66700120C89 /* SubHTMLExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555762132AE9C66700120C89 /* SubHTMLExporter.swift */; };
 		555762172AE9E67900120C89 /* SSAMacRendering.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 557C8ED41F33913E004D986C /* SSAMacRendering.framework */; };
-		5567D29F309F17EC00C044F5 /* SubCoreTextRendererOld.m in Sources */ = {isa = PBXBuildFile; fileRef = 557C8EFE1F33945F004D986C /* SubCoreTextRendererOld.m */; };
 		5567D2A2309F1D0000C044F5 /* SubCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5567D2A0309F1D0000C044F5 /* SubCoreTextRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5567D2A3309F1D0000C044F5 /* SubCoreTextRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5567D2A1309F1D0000C044F5 /* SubCoreTextRenderer.m */; };
 		557C8ED91F33913E004D986C /* SSAMacRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8ED71F33913E004D986C /* SSAMacRendering.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,7 +29,6 @@
 		557C8EFA1F339151004D986C /* SubRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EEB1F339151004D986C /* SubRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		557C8EFB1F339151004D986C /* SubUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EEC1F339151004D986C /* SubUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		557C8EFC1F339151004D986C /* SubUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 557C8EED1F339151004D986C /* SubUtilities.m */; };
-		557C8EFF1F33945F004D986C /* SubCoreTextRendererOld.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8EFD1F33945F004D986C /* SubCoreTextRendererOld.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		557C8F031F339525004D986C /* CommonUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 557C8F011F339525004D986C /* CommonUtils.c */; };
 		557C8F041F339525004D986C /* CommonUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 557C8F021F339525004D986C /* CommonUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		557C8F201F339FE7004D986C /* SubParsing.m.rl in Sources */ = {isa = PBXBuildFile; fileRef = 557C8EEA1F339151004D986C /* SubParsing.m.rl */; };
@@ -564,7 +562,6 @@
 			files = (
 				557C8EF81F339151004D986C /* SubParsing.h in Headers */,
 				557C8ED91F33913E004D986C /* SSAMacRendering.h in Headers */,
-				557C8EFF1F33945F004D986C /* SubCoreTextRendererOld.h in Headers */,
 				557C8EF21F339151004D986C /* SubATSUIRenderer.h in Headers */,
 				557C8EF61F339151004D986C /* SubImport.h in Headers */,
 				557C8EFB1F339151004D986C /* SubUtilities.h in Headers */,
@@ -889,7 +886,6 @@
 				557C8EFC1F339151004D986C /* SubUtilities.m in Sources */,
 				557C8F031F339525004D986C /* CommonUtils.c in Sources */,
 				553A1FD12E7BB41600C185CE /* SubATSUIRenderer.m in Sources */,
-				5567D29F309F17EC00C044F5 /* SubCoreTextRendererOld.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
