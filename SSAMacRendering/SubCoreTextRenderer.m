@@ -14,6 +14,7 @@
 #import "CommonUtils.h"
 #include <CoreText/CoreText.h>
 #include <math.h>
+#include <tgmath.h>
 
 #define declare_bitfield(name, bits) uint8_t name[bits / 8 + 1]; bzero(name, sizeof(name));
 #define bitfield_set(name, bit) name[(bit) / 8] |= 1 << ((bit) % 8);
@@ -518,18 +519,32 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra3 *spanEx, CGFloat screenScal
 			div->scale = fval;
 			break;
 		case tag_frx:
+			Codecprintf(NULL, "Unimplemented SSA tag 'frx'\n");
+			break;
 		case tag_fry:
+			Codecprintf(NULL, "Unimplemented SSA tag 'fry'\n");
+			break;
 		case tag_2c:
+			colorv();
+			CGColorRelease(color);
+			Codecprintf(NULL, "Unimplemented SSA tag '2c'\n");
+			break;
 		case tag_2a:
+			colorv();
+			CGColorRelease(color);
+			Codecprintf(NULL, "Unimplemented SSA tag '2a'\n");
+			break;
 		case tag_t:
+			Codecprintf(NULL, "Unimplemented SSA tag 't'\n");
+			break;
 		case tag_pbo:
+			Codecprintf(NULL, "Unimplemented SSA tag 'pbo'\n");
+			break;
 		case tag_fad:
+			Codecprintf(NULL, "Unimplemented SSA tag 'fad'\n");
+			break;
 		case tag_fade:
-			Codecprintf(NULL, "Unimplemented SSA tag #%d\n",tag);
-			if (tag == tag_2c || tag == tag_2a) {
-				colorv();
-				CGColorRelease(color);
-			}
+			Codecprintf(NULL, "Unimplemented SSA tag 'fade'\n");
 			break;
 		default:
 			Codecprintf(NULL, "Unimplemented SSA tag #%d\n",tag);
