@@ -349,7 +349,7 @@ typedef struct {
 	}
 
 	dict[(NSString*)kCTFontAttributeName] = newFont;
-	dict[(NSString*)kCTForegroundColorFromContextAttributeName] = @YES;
+//	dict[(NSString*)kCTForegroundColorFromContextAttributeName] = @YES;
 
 	if (s->tracking > 0) {
 		dict[(NSString*)kCTKernAttributeName] = @(s->tracking);
@@ -619,6 +619,9 @@ static NSMutableAttributedString *AttributedStringForDiv(SubRenderDiv *div)
 		if (ex->outlineColor) {
 			attrs[(NSString*)kCTStrokeColorAttributeName] = (__bridge id _Nullable)(ex->outlineColor);
 		}
+//		if (ex->outlineRadius) {
+//			attrs[(NSString*)kCTStrokeWidthAttributeName] = @(ex->outlineRadius*2. + .5);
+//		}
 		if (ex->primaryColor) {
 			attrs[(NSString*)kCTForegroundColorAttributeName] = (__bridge id _Nullable)(ex->primaryColor);
 		}
@@ -1178,6 +1181,7 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 				if (firstSpanEx->vertical && div->alignV == kSubAlignmentMiddle && div->alignH == kSubAlignmentCenter) {
 					CGContextTranslateCTM(c, imageWidth/2, imageWidth/2);
 				}
+				//FIXME: these are wrong...
 				CGFloat localPenX = 0;
 				CGFloat localPenY = 0;
 				breakc.breakCount = breakCount;
