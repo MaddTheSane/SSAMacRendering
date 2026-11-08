@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(uint16_t, SubRenderAnimations) {
 	SubRenderAnimationNone = 0,
 	SubRenderAnimationSimpleFade = 1 << 0,
-	SubRenderAnimationCopmlexFade = 1 << 1,
+	SubRenderAnimationComplexFade = 1 << 1,
 };
 
 typedef struct SubRenderFad {
