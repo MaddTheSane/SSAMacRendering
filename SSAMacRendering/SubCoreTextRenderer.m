@@ -50,6 +50,7 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale
 	CGFloat outlineRadius, shadowDist, scaleX, scaleY, primaryAlpha, outlineAlpha, angle, platformSizeScale, fontSize;
 	BOOL blurEdges, vertical;
 	NSString *fontName;
+	CGAffineTransform transform;
 }
 -(instancetype)initWithStyle:(SubStyle*)sstyle colorSpace:(CGColorSpaceRef)cs;
 @end
@@ -120,6 +121,7 @@ static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha)
 		fontSize = sstyle->size;
 		vertical = sstyle->vertical;
 		fontName = [sstyle->fontname copy];
+		transform = CGAffineTransformIdentity;
 	}
 	return self;
 }
@@ -143,6 +145,7 @@ static CGColorRef CopyCGColorWithAlpha(CF_CONSUMED CGColorRef c, CGFloat alpha)
 	ret->fontName = [fontName copy];
 	ret->blurEdges = blurEdges;
 	ret->vertical = vertical;
+	ret->transform = transform;
 	return ret;
 }
 
@@ -480,15 +483,13 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale
 			fv();
 			spanEx->scaleX = fval / 100.;
 			mat = CGAffineTransformMakeScale(spanEx->scaleX, spanEx->scaleY);
-			//TODO: set scale
-			(void)mat;
+			spanEx->transform = mat;
 			break;
 		case tag_fscy:
 			fv();
 			spanEx->scaleY = fval / 100.;
 			mat = CGAffineTransformMakeScale(spanEx->scaleX, spanEx->scaleY);
-			//TODO: set scale
-			(void)mat;
+			spanEx->transform = mat;
 			break;
 		case tag_fsp:
 			fv();
@@ -558,6 +559,7 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale
 			Codecprintf(NULL, "Unimplemented SSA tag '2a'\n");
 			break;
 		case tag_t:
+			sv();
 			Codecprintf(NULL, "Unimplemented SSA tag 't'\n");
 			break;
 		case tag_pbo:
@@ -566,10 +568,12 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale
 			break;
 		case tag_fad:
 			// TODO: fad support
+			sv();
 			Codecprintf(NULL, "Unimplemented SSA tag 'fad'\n");
 			break;
 		case tag_fade:
 			// TODO: fade support
+			sv();
 			Codecprintf(NULL, "Unimplemented SSA tag 'fade'\n");
 			break;
 		default:
@@ -1174,14 +1178,15 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 			CGFloat blockWidth = breakingWidth;
 			if (div->positioned && imageWidth > 0) blockWidth = imageWidth;
 			if (firstSpanEx->angle) {
+				// TODO: check if this code is needlessly duplicated.
 				// Approximate ATSUI line rotation by rotating around pen position.
 				CGContextSaveGState(c);
 				CGContextTranslateCTM(c, penX, penY);
 				CGContextRotateCTM(c, (firstSpanEx->angle * M_PI / 180.0));
+				CGContextConcatCTM(c, firstSpanEx->transform);
 				if (firstSpanEx->vertical && div->alignV == kSubAlignmentMiddle && div->alignH == kSubAlignmentCenter) {
 					CGContextTranslateCTM(c, imageWidth/2, imageWidth/2);
 				}
-				//FIXME: these are wrong...
 				CGFloat localPenX = 0;
 				CGFloat localPenY = 0;
 				breakc.breakCount = breakCount;
@@ -1194,6 +1199,12 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 				if (storePen) *storePen = localPenY; // best-effort in rotated space
 				continue;
 			}
+			CGContextSaveGState(c);
+			CGContextTranslateCTM(c, penX, penY);
+			CGContextConcatCTM(c, firstSpanEx->transform);
+			if (firstSpanEx->vertical && div->alignV == kSubAlignmentMiddle && div->alignH == kSubAlignmentCenter) {
+				CGContextTranslateCTM(c, imageWidth/2, imageWidth/2);
+			}
 
 			breakc.breakCount = breakCount;
 			breakc.breaks = breaks;
@@ -1202,6 +1213,7 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 			}
 
 			penY = DrawOneTextDiv(c, astr, ctLines, div, breakc, penX, penY, blockWidth);
+			CGContextRestoreGState(c);
 			if (storePen) *storePen = penY;
 		}
 	}
