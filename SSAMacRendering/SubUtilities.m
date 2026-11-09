@@ -351,7 +351,6 @@ static void OurCGMutablePathAddUniformCubicBSpline(CGMutablePathRef thePath, con
 	CGFloat startY = (p0.y + 4 * p1.y + p2.y) / 6.0;
 
 	// Move to the beginning of the spline if the path is empty
-	
 	if (CGPathIsEmpty(thePath)) {
 		CGPathMoveToPoint(thePath, transform, startX, startY);
 	} else {

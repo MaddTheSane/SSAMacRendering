@@ -61,17 +61,17 @@ int main(int argc, char *argv[])
 			SubLine *sl = [ss getSerializedPacket];
 			if ([sl.line length] > 1) {
 #ifdef CREATE_A_LOT_OF_PDFS
-				NSString *pdf = [outDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%d.pdf", i]];
-				CGContextRef pdfC = CGPDFContextCreateWithURL((CFURLRef)[NSURL fileURLWithPath:pdf], &rect, NULL);
+				NSURL *pdf = [outURL URLByAppendingPathComponent:[NSString stringWithFormat:@"%d.pdf", i]];
+				CGContextRef pdfC = CGPDFContextCreateWithURL((CFURLRef)pdf, &rect, NULL);
 				CGContextBeginPage(pdfC, NULL);
-				SubRendererRenderPacket(s, pdfC, (CFStringRef)sl.line, width, height);
+				SubRendererRenderPacket(s, pdfC, (__bridge CFStringRef)sl.line, width, height);
 				CGContextEndPage(pdfC);
 				CGContextRelease(pdfC);
 				
-				NSString *ps = [outDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%d.eps", i]];
-				CGContextRef psC = CGPSContextCreateWithURL((CFURLRef)[NSURL fileURLWithPath:ps], &rect, NULL);
+				NSURL *ps = [outURL URLByAppendingPathComponent:[NSString stringWithFormat:@"%d.eps", i]];
+				CGContextRef psC = CGPSContextCreateWithURL((__bridge CFURLRef)ps, &rect, NULL);
 				CGContextBeginPage(psC, NULL);
-				SubRendererRenderPacket(s, psC, (CFStringRef)sl.line, width, height);
+				SubRendererRenderPacket(s, psC, (__bridge CFStringRef)sl.line, width, height);
 				CGContextEndPage(psC);
 				CGContextRelease(psC);
 				i++;
