@@ -86,8 +86,8 @@
 	[html appendFormat:@".screen {width: %fpx; height: %fpx; background-color: gray; position: relative; display: table}\n.bottom {bottom: 20px; position: absolute} .top {top: 20px; position: absolute}\n",sc->resX,sc->resY];
 }
 
-static const NSString *haligns[] = {@"left", @"center", @"right"};
-static const NSString *valigns[] = {@"bottom", @"middle", @"top"};
+static const NSArray<NSString *> * const haligns = @[@"left", @"center", @"right"];
+static const NSArray<NSString *> * const valigns = @[@"bottom", @"middle", @"top"];
 
 // font-weight actually seems to be enumerated 100|200|...|900
 // but, like, whatever
@@ -139,7 +139,7 @@ NSString *htmlfilter(NSString *s)
 	NSMutableString *ms = [s mutableCopy];
 	
 	[ms replaceOccurrencesOfString:@"\n" withString:@"<br>\n" options:0 range:NSMakeRange(0, [ms length])];
-//	[ms replaceOccurrencesOfString:[NSString stringWithFormat:@"%C",0x00A0] withString:@"&nbsp;" options:0 range:NSMakeRange(0, [ms length])];
+//	[ms replaceOccurrencesOfString:@"\00A0" withString:@"&nbsp;" options:0 range:NSMakeRange(0, [ms length])];
 	return ms;
 }
 
@@ -281,7 +281,7 @@ NSString *htmlfilter(NSString *s)
 int main(int argc, char *argv[])
 {
 	if (argc != 2)
-		return 1;
+		return EXIT_FAILURE;
 	
 	@autoreleasepool {
 		SubContext *sc; SubSerializer *ss = [[SubSerializer alloc] init];
@@ -313,5 +313,5 @@ int main(int argc, char *argv[])
 		puts([htm.html UTF8String]);
 	}
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

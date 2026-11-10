@@ -1168,6 +1168,7 @@ static CGFloat AlignmentOffset(CGFloat lineWidth, CGFloat maxWidth, SubAlignment
 			CGFloat angle = firstSpanEx->angle;
 			angle *= M_PI / 180.;
 			trans = CGAffineTransformRotate(trans, angle);
+			trans = CGAffineTransformScale(trans, firstSpanEx->scaleX, firstSpanEx->scaleY);
 			CGAffineTransform trans2 = CGAffineTransformMake(1, 0, 0, -1, 0, videoHeight * screenScaleY);
 			CGContextConcatCTM(c, trans2);
 			CGPathRef pr = CreateSubParseSubShapesWithString(div->text, &trans);
