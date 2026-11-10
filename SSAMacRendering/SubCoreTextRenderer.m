@@ -396,6 +396,8 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale
 	NSString *sval;
 	float fval;
 	int ival;
+	SubRenderFad fadval;
+	SubRenderFade fadeval;
 
 #define bv() bval = *(int*)p;
 #define iv() ival = *(int*)p;
@@ -569,11 +571,19 @@ static void UpdateFontNameSize(SubCoreTextSpanExtra *spanEx, CGFloat screenScale
 		case tag_fad:
 			// TODO: fad support
 			sv();
+		{
+			BOOL success = SubParseSSAFad(sval, &fadval);
+			(void)success;
+		}
 			Codecprintf(NULL, "Unimplemented SSA tag 'fad'\n");
 			break;
 		case tag_fade:
 			// TODO: fade support
 			sv();
+		{
+			BOOL success = SubParseSSAFade(sval, &fadeval);
+			(void)success;
+		}
 			Codecprintf(NULL, "Unimplemented SSA tag 'fade'\n");
 			break;
 		default:

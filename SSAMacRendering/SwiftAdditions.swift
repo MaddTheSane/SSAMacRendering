@@ -149,3 +149,21 @@ extension SubAlignmentV: CustomStringConvertible {
 		}
 	}
 }
+
+public func SubParseSSAFad(_ string: String) -> SubRenderFad? {
+	var fad = SubRenderFad()
+	let success = __SubParseSSAFad(string, &fad)
+	guard success else {
+		return nil
+	}
+	return fad
+}
+
+public func SubParseSSAFade(_ string: String) -> SubRenderFade? {
+	var fad = SubRenderFade()
+	let success = __SubParseSSAFade(string, &fad)
+	guard success else {
+		return nil
+	}
+	return fad
+}

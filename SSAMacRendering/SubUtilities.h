@@ -21,6 +21,7 @@
 
 #import <Foundation/Foundation.h>
 #include <CoreGraphics/CoreGraphics.h>
+#import <SSAMacRendering/SubParsing.h>
 
 __BEGIN_DECLS
 
@@ -38,8 +39,10 @@ NSString *SubStandardizeStringNewlines(NSString *str);
 BOOL SubDifferentiateLatin12(const unsigned char *data, NSInteger length);
 
 const unichar * __nullable SubUnicodeForString(NSString *str, NSData * __nonnull __strong* __nullable datap) CF_DEPRECATED_MAC(10_0, 10_11);
-//extern NSBezierPath *SubParseSubShapesWithString(NSString *aStr) NS_SWIFT_NAME(parseSubShapes(string:));
+//extern NSBezierPath *SubParseSubShapesWithString(NSString *aStr) NS_SWIFT_NAME(parseSubShapes(with:));
 extern CGPathRef CreateSubParseSubShapesWithString(NSString *aStr, const CGAffineTransform * __nullable m) CF_RETURNS_RETAINED NS_SWIFT_NAME(parseSubShapes(with:transform:));
+extern BOOL SubParseSSAFad(NSString *string, SubRenderFad *value) NS_REFINED_FOR_SWIFT;
+extern BOOL SubParseSSAFade(NSString *string, SubRenderFade *value) NS_REFINED_FOR_SWIFT;
 
 NS_ASSUME_NONNULL_END
 

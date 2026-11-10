@@ -375,3 +375,57 @@ static void OurCGMutablePathAddUniformCubicBSpline(CGMutablePathRef thePath, con
 		CGPathAddCurveToPoint(thePath, transform, cp1X, cp1Y, cp2X, cp2Y, endX, endY);
 	}
 }
+
+BOOL SubParseSSAFad(NSString *string, SubRenderFad *value)
+{
+	if (!string) {
+		return NO;
+	}
+	if (!value) {
+		return NO;
+	}
+	int start = 0, end = 0;
+	NSScanner *scanner = [NSScanner scannerWithString:string];
+	BOOL success = [scanner scanInt:&start] && [scanner scanInt:&end];
+	if (success) {
+		value->startTime = start;
+		value->endTime = end;
+	}
+	return success;
+}
+
+BOOL SubParseSSAFade(NSString *string, SubRenderFade *value)
+{
+	if (!string) {
+		return NO;
+	}
+	if (!value) {
+		return NO;
+	}
+	double a1 = 0;
+	double a2 = 0;
+	double a3 = 0;
+	int startTime = 0;
+	int t2 = 0;
+	int t3 = 0;
+	int endTime = 0;
+
+	NSScanner *scanner = [NSScanner scannerWithString:string];
+
+	BOOL success = [scanner scanDouble:&a1] && [scanner scanDouble:&a2]
+	&& [scanner scanDouble:&a3] && [scanner scanInt:&startTime]
+	&& [scanner scanInt:&t2] && [scanner scanInt:&t3]
+	&& [scanner scanInt:&endTime];
+
+	if (success) {
+		value->a1 = a1;
+		value->a2 = a2;
+		value->a3 = a3;
+		value->startTime = startTime;
+		value->t2 = t2;
+		value->t3 = t3;
+		value->endTime = endTime;
+	}
+
+	return success;
+}
