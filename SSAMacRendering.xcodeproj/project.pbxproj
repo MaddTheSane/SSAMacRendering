@@ -243,6 +243,7 @@
 		555762132AE9C66700120C89 /* SubHTMLExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubHTMLExporter.swift; sourceTree = "<group>"; };
 		5567D2A0309F1D0000C044F5 /* SubCoreTextRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubCoreTextRenderer.h; sourceTree = "<group>"; };
 		5567D2A1309F1D0000C044F5 /* SubCoreTextRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubCoreTextRenderer.m; sourceTree = "<group>"; };
+		556D6DD630A44B2B006CFAF5 /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = SOURCE_ROOT; };
 		557C8ED41F33913E004D986C /* SSAMacRendering.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SSAMacRendering.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		557C8ED71F33913E004D986C /* SSAMacRendering.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSAMacRendering.h; sourceTree = "<group>"; };
 		557C8ED81F33913E004D986C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -395,6 +396,7 @@
 			isa = PBXGroup;
 			children = (
 				5524CD4A1FAB977E00D87C85 /* CTA.playground */,
+				556D6DD630A44B2B006CFAF5 /* ReadMe.md */,
 				557C8F151F339CD9004D986C /* Third-party */,
 				557C8ED61F33913E004D986C /* SSAMacRendering */,
 				557C8F261F33A558004D986C /* SSATestRendering */,

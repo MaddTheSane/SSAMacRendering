@@ -21,7 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable CGFontRef)registerFontFromData:(NSData*)data error:(NSError*_Nullable __autoreleasing*_Nullable)error CF_RETURNS_RETAINED;
 
-/** @brief Unregisters a font from CoreText and releases it.
+/**
+ * @brief Unregisters a font from CoreText and releases it.
  *
  * @discussion The font will **always** be released, no matter if the unregistration was successful.
  * If you used ``registerFontsAtURL:error:`` to register a font, use ``unregisterFontsAtURL:error:`` instead of this method.
