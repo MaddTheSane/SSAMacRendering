@@ -294,7 +294,7 @@ typedef struct {
 		context = [[SubContext alloc] initWithScriptType:type headers:headers styles:styles delegate:self];
 		breakBuffer = malloc(sizeof(UniCharArrayOffset) * 2);
 		srgbCSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-		drawTextBounds = YES; //CFPreferencesGetAppBooleanValue(CFSTR("DrawSubTextBounds"), PERIAN_PREF_DOMAIN, NULL);
+		drawTextBounds = CFPreferencesGetAppBooleanValue(CFSTR("DrawSubTextBounds"), PERIAN_PREF_DOMAIN, NULL);
 	}
 	return self;
 }
