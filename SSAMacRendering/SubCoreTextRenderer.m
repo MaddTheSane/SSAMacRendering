@@ -310,6 +310,8 @@ typedef struct {
 	return videoWidth / videoHeight;
 }
 
+@synthesize drawTextBounds;
+
 -(void)didCompleteStyleParsing:(SubStyle*)s
 {
 	NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:7];
