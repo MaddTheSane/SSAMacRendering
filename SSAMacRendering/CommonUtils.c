@@ -20,11 +20,8 @@
  */
 
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <Carbon/Carbon.h>
-#include <pthread.h>
-#include <dlfcn.h>
-#include <fnmatch.h>
-
 #include "CommonUtils.h"
 
 

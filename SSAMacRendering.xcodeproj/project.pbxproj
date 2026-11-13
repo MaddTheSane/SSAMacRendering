@@ -430,8 +430,8 @@
 		557C8ED61F33913E004D986C /* SSAMacRendering */ = {
 			isa = PBXGroup;
 			children = (
-				557C8F011F339525004D986C /* CommonUtils.c */,
 				557C8F021F339525004D986C /* CommonUtils.h */,
+				557C8F011F339525004D986C /* CommonUtils.c */,
 				557C8EDF1F339151004D986C /* detect-encoding.m */,
 				557C8EE01F339151004D986C /* latin-detector.c */,
 				557C8EE31F339151004D986C /* SubATSUIRenderer.h */,

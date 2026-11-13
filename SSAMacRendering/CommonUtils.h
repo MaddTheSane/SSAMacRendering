@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 //! does the current process break if we signal droppable frames?
-	bool IsFrameDroppingEnabled(void);
+bool IsFrameDroppingEnabled(void);
 
 //! does the current process break if we return errors in Preflight?
 bool IsForcedDecodeEnabled(void);
@@ -43,7 +43,7 @@ extern CGFloat GetWinCTFontSizeScale(CTFontRef font);
 
 #define PERIAN_PREF_DOMAIN CFSTR("org.perian.Perian")
 #define PERIAN_EXPORTED __attribute__((visibility("default")))
-	
+
 #ifdef __cplusplus
 }
 #endif
